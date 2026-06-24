@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Med Track - النظام الطبي الذكي</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+
+    <nav>
+        <div class="logo">
+            <img src="logo.svg.png" alt="Med Track Logo" style="width: 80px; height: auto; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">
+            Med Track
+        </div>
+        <ul id="main-nav-links">
+            <li><a href="index.HTML" class="active">الرئيسية</a></li>
+            <li><a href="#services">الخدمات</a></li>
+            <!-- Mobile specific login links (hidden on desktop) -->
+            <li class="mobile-only-link"><a href="pages/login.html"><i class="fa-solid fa-bed-pulse" style="margin-left: 5px;"></i> بوابة المرضى</a></li>
+            <li class="mobile-only-link"><a href="pages/staff-login.html?role=doctor"><i class="fa-solid fa-user-doctor" style="margin-left: 5px;"></i> بوابة الأطباء</a></li>
+            <li class="mobile-only-link"><a href="pages/staff-login.html?role=lab"><i class="fa-solid fa-flask-vial" style="margin-left: 5px;"></i> الأشعة والتحاليل</a></li>
+            <li class="mobile-only-link"><a href="pages/staff-login.html?role=admin"><i class="fa-solid fa-hospital" style="margin-left: 5px;"></i> بوابة المستشفى</a></li>
+        </ul>
+        <div class="nav-login-wrapper desktop-only">
+            <a href="pages/login.html" class="btn">تسجيل دخول <i class="fa-solid fa-chevron-down" style="font-size:12px; margin-right: 5px;"></i></a>
+            <div class="nav-login-dropdown">
+
+                <a href="pages/staff-login.html?role=doctor" class="nav-login-item">
+                    <i class="fa-solid fa-user-doctor" style="color: var(--primary);"></i>
+                    <div class="item-text">
+                        <span class="item-title">بوابة الأطباء</span>
+                        <span class="item-desc">تابع المرضى واكتب الروشتات</span>
+                    </div>
+                </a>
+                <a href="pages/staff-login.html?role=lab" class="nav-login-item">
+                    <i class="fa-solid fa-flask-vial" style="color: var(--warning);"></i>
+                    <div class="item-text">
+                        <span class="item-title">الأشعة والتحاليل</span>
+                        <span class="item-desc">ارفع التقارير والنتائج فوراً</span>
+                    </div>
+                </a>
+                <a href="pages/staff-login.html?role=admin" class="nav-login-item">
+                    <i class="fa-solid fa-hospital" style="color: var(--danger);"></i>
+                    <div class="item-text">
+                        <span class="item-title">بوابة المستشفى</span>
+                        <span class="item-desc">إدارة النظام والحسابات والتقارير</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <button class="btn mobile-menu-btn" style="padding: 8px 12px; font-size: 18px;" onclick="document.getElementById('main-nav-links').classList.toggle('nav-active'); document.querySelector('.sidebar-overlay').classList.toggle('active');"><i class="fa-solid fa-bars"></i></button>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>نظام طبي ذكي متكامل للمستشفيات والعيادات</h1>
+            <p>إدارة سلسة للبيانات الطبية، تواصل فعّال بين الأطباء والمرضى، وحجز المواعيد إلكترونياً لضمان تجربة صحية أفضل وأسرع.</p>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <a href="pages/login.html" class="btn">تسجيل دخول <i class="fa-solid fa-arrow-right-to-bracket"></i></a>
+                <a href="#services" class="btn btn-outline">اكتشف خدماتنا</a>
+            </div>
+        </div>
+        <img src="logo.svg.png" alt="Med Track System Logo" class="hero-img" style="max-width: 550px; width: 100%; object-fit: contain; filter: drop-shadow(0px 10px 20px rgba(10, 124, 255, 0.2)); animation: float 4s ease-in-out infinite;">
+    </section>
+
+    <div style="padding: 0 5%;">
+        <div class="stats-wrapper">
+            <div class="stat-box">
+                <h2 id="patientsCount">0</h2>
+                <p>مريض مستفيد</p>
+            </div>
+            <div class="stat-box">
+                <h2 id="doctorsCount">0</h2>
+                <p>طبيب متخصص</p>
+            </div>
+            <div class="stat-box">
+                <h2 id="appointmentsCount">0</h2>
+                <p>حجز ناجح</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Quick Login Gateways Section -->
+    <section class="gateways-section" id="login-gateways">
+        <div style="text-align: center;">
+            <h2 class="section-title" style="margin-bottom: 10px;">بوابات Med Track الرقمية</h2>
+            <p style="color: var(--text-muted); font-size: 18px; max-width: 600px; margin: 0 auto 40px; line-height: 1.8;">
+                نربط كافة أطراف المنظومة الطبية لتوفير تجربة صحية متكاملة وسريعة. اختر بوابتك المناسبة لتسجيل الدخول:
+            </p>
+        </div>
+        <div class="gateways-grid">
+
+
+            <!-- Doctor Card -->
+            <div class="gateway-card doctor-card">
+                <div class="gateway-icon"><i class="fa-solid fa-user-doctor"></i></div>
+                <h3>بوابة الأطباء</h3>
+                <p>شريكك الرقمي لمتابعة سجلات المرضى بدقة وإصدار الروشتات الإلكترونية والتقارير.</p>
+                <a href="pages/staff-login.html?role=doctor" class="btn">دخول الأطباء <i class="fa-solid fa-arrow-left"></i></a>
+            </div>
+
+            <!-- Lab/Scan Card -->
+            <div class="gateway-card lab-card">
+                <div class="gateway-icon"><i class="fa-solid fa-flask-vial"></i></div>
+                <h3>الأشعة والتحاليل</h3>
+                <p>بوابة مخصصة للمراكز لرفع الفحوصات والتقارير الطبية مباشرة إلى حساب المريض.</p>
+                <a href="pages/staff-login.html?role=lab" class="btn">دخول المركز <i class="fa-solid fa-arrow-left"></i></a>
+            </div>
+
+            <!-- Hospital Card -->
+            <div class="gateway-card admin-card">
+                <div class="gateway-icon"><i class="fa-solid fa-hospital"></i></div>
+                <h3>بوابة المستشفى</h3>
+                <p>إدارة متكاملة لإعدادات النظام، حسابات الموظفين، الإحصائيات، ومراجعة طلبات الانضمام.</p>
+                <a href="pages/staff-login.html?role=admin" class="btn">دخول المستشفى <i class="fa-solid fa-arrow-left"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="services">
+        <h2 class="section-title">خدمات النظام</h2>
+        <div class="grid-container">
+            <div class="card">
+                <div class="icon"><i class="fa-solid fa-laptop-medical"></i></div>
+                <h3>الملف الطبي الذكي</h3>
+                <p>ملف متكامل يحتوي على تاريخك المرضي، التحاليل، والأشعة للوصول السريع والآمن.</p>
+            </div>
+            <div class="card">
+                <div class="icon"><i class="fa-solid fa-calendar-check"></i></div>
+                <h3>الحجز الإلكتروني</h3>
+                <p>احجز موعدك مع طبيبك المفضل بسهولة دون الحاجة للانتظار في المستشفى.</p>
+            </div>
+            <div class="card">
+                <div class="icon"><i class="fa-solid fa-user-doctor"></i></div>
+                <h3>تواصل مباشر</h3>
+                <p>تحدث مع طبيبك مباشرة عبر النظام، أرسل التحاليل، واحصل على الاستشارة.</p>
+            </div>
+            
+            <!-- New Services added per user request -->
+            <div class="card">
+                <div class="icon"><i class="fa-solid fa-file-waveform"></i></div>
+                <h3>مزامنة الأشعة والتحاليل</h3>
+                <p>إمكانية رفع الأشعة والتحاليل وعرضها فوراً على الطبيب، مع قيام المستشفى برفع نتائجك تلقائياً في سجلك.</p>
+            </div>
+            <div class="card">
+                <div class="icon"><i class="fa-solid fa-file-prescription"></i></div>
+                <h3>الروشتات الإلكترونية</h3>
+                <p>إصدار وكتابة روشتات دقيقة للمريض تصل إلى حسابه فوراً مع تنبيهات بأوقات الجرعات.</p>
+            </div>
+            <div class="card">
+                <div class="icon"><i class="fa-solid fa-stethoscope"></i></div>
+                <h3>استشارات طبية عن بعد</h3>
+                <p>عمل استشارة طبية سريعة عبر شات مخصص وتفاعلي مع طبيبك المعالج لتشخيص حالتك ومتابعتها.</p>
+            </div>
+
+        </div>
+    </section>
+
+
+
+    <footer style="background: var(--card-bg); padding: 40px 20px; text-align: center; border-top: 1px solid var(--border-color); margin-top: 50px;">
+        <h3 style="color:var(--primary); margin-bottom: 10px;">Med Track</h3>
+        <p style="color:var(--text-muted); font-size: 15px;">جميع الحقوق محفوظة © 2026 - نظام الإدارة الطبية الذكي</p>
+    </footer>
+
+    <!-- Emergency Call Button -->
+    <a href="tel:997" class="emergency-btn" title="اتصال بالطوارئ والاسعاف">
+        <i class="fa-solid fa-truck-medical"></i>
+        <span class="emergency-text">طوارئ / إسعاف</span>
+    </a>
+    <script src="script.js"></script>
+</body>
+</html>
