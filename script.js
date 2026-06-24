@@ -148,24 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Add mobile menu toggle for main nav
-    const nav = document.querySelector('nav');
-    const navUl = document.querySelector('nav ul');
-    if (nav && navUl && !sidebar) {
-        const toggleBtn = document.createElement('button');
-        toggleBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
-        toggleBtn.className = 'btn mobile-menu-btn';
-        toggleBtn.style.padding = '8px 12px';
-        toggleBtn.onclick = () => {
-            navUl.classList.toggle('nav-active');
-        };
-        const rightDiv = nav.querySelector('div[style*="display: flex"]');
-        if (rightDiv) {
-            rightDiv.insertBefore(toggleBtn, rightDiv.firstChild);
-        } else {
-            nav.appendChild(toggleBtn);
-        }
-    }
+    // Main nav mobile menu injection removed per user request
 
     // --- History API & LocalStorage for Persistence ---
     window.showSec = function(id, el, updateHash = true) {
