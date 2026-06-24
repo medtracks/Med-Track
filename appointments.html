@@ -4,18 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>حجز موعد - Med Track</title>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 </head>
 <body>
 
     <nav>
         <div class="logo">
-            <img src="../logo.svg.png" alt="Med Track Logo" style="width: 40px; height: auto;">
+            <img src="logo.svg.png" alt="Med Track Logo" style="width: 40px; height: auto;">
             Med Track
         </div>
         <ul>
-            <li><a href="../index.html">الرئيسية</a></li>
+            <li><a href="index.html">الرئيسية</a></li>
             <li><a href="patients.html">بوابة المريض</a></li>
         </ul>
         
@@ -25,48 +25,58 @@
         <div class="form-box">
             <h2 class="title" style="margin-bottom: 30px;"><i class="fa-solid fa-calendar-check" style="color: var(--primary);"></i> حجز موعد جديد</h2>
             
-            <div class="input-group">
-                <label>التخصص المطلوب</label>
-                <select>
-                    <option>اختر التخصص...</option>
-                    <option>القلب والأوعية الدموية</option>
-                    <option>طب الأطفال</option>
-                    <option>الأسنان</option>
-                    <option>الباطنة</option>
-                    <option>العظام</option>
-                </select>
-            </div>
-            
-            <div class="input-group">
-                <label>الطبيب المعالج (اختياري)</label>
-                <select>
-                    <option>أي طبيب متاح</option>
-                    <option>د. أحمد سمير</option>
-                    <option>د. منى شاكر</option>
-                    <option>د. طارق سعيد</option>
-                </select>
-            </div>
-
-            <div style="display: flex; gap: 15px;">
-                <div class="input-group" style="flex: 1;">
-                    <label>تاريخ الموعد</label>
-                    <input type="date">
+            <form id="appointmentForm" onsubmit="return submitAppointment(event)">
+                <div class="input-group">
+                    <label>التخصص المطلوب</label>
+                    <select name="specialty" required>
+                        <option value="">اختر التخصص...</option>
+                        <option value="القلب والأوعية الدموية">القلب والأوعية الدموية</option>
+                        <option value="طب الأطفال">طب الأطفال</option>
+                        <option value="الأسنان">الأسنان</option>
+                        <option value="الباطنة">الباطنة</option>
+                        <option value="العظام">العظام</option>
+                    </select>
                 </div>
-                <div class="input-group" style="flex: 1;">
-                    <label>الوقت المناسب</label>
-                    <input type="time">
+                
+                <div class="input-group">
+                    <label>الطبيب المعالج (اختياري)</label>
+                    <select name="doctor">
+                        <option value="">أي طبيب متاح</option>
+                        <option value="د. أحمد سمير">د. أحمد سمير</option>
+                        <option value="د. منى شاكر">د. منى شاكر</option>
+                        <option value="د. طارق سعيد">د. طارق سعيد</option>
+                    </select>
                 </div>
-            </div>
 
-            <div class="input-group">
-                <label>ملاحظات إضافية عن الحالة</label>
-                <textarea rows="3" placeholder="اكتب باختصار سبب الزيارة أو أي أعراض تعاني منها..."></textarea>
-            </div>
-            
-            <button class="btn" style="width: 100%; margin-top: 20px;" onclick="alert('تم إرسال طلب الحجز بنجاح، سيتم تأكيد الموعد قريباً.')">تأكيد الحجز <i class="fa-solid fa-check"></i></button>
+                <div style="display: flex; gap: 15px;">
+                    <div class="input-group" style="flex: 1;">
+                        <label>تاريخ الموعد</label>
+                        <input type="date" name="appointment_date" required>
+                    </div>
+                    <div class="input-group" style="flex: 1;">
+                        <label>الوقت المناسب</label>
+                        <input type="time" name="appointment_time" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>ملاحظات إضافية عن الحالة</label>
+                    <textarea name="notes" rows="3" placeholder="اكتب باختصار سبب الزيارة أو أي أعراض تعاني منها..."></textarea>
+                </div>
+                
+                <button type="submit" class="btn" style="width: 100%; margin-top: 20px;">تأكيد الحجز <i class="fa-solid fa-check"></i></button>
+            </form>
         </div>
     </section>
 
-    <script src="../script.js"></script>
+    <script src="script.js"></script>
+    <script>
+        function submitAppointment(e) {
+            e.preventDefault();
+            // Backend will collect form data here
+            alert('تم إرسال طلب الحجز بنجاح، سيتم تأكيد الموعد قريباً.');
+            window.location.href = 'patients.html';
+        }
+    </script>
 </body>
 </html>

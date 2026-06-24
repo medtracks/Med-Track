@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بوابة الطبيب - Med Track</title>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
@@ -16,7 +16,7 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="logo">
-                <img src="../logo.svg.png" alt="Med Track Logo"
+                <img src="logo.svg.png" alt="Med Track Logo"
                     style="width: 70px; height: auto; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">
                 Med Track
             </div>
@@ -35,7 +35,7 @@
                             class="fa-solid fa-user-gear"></i> إعدادات الحساب</a></li>
             </ul>
             <ul style="flex: 0;">
-                <li><a href="../index.html" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i>
+                <li><a href="index.html" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i>
                         تسجيل الخروج</a></li>
             </ul>
         </aside>
@@ -217,18 +217,18 @@
             <section id="sec-prescriptions" class="content-section" style="display:none;">
                 <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-file-prescription"></i> كتابة روشتة تقرير للمريض
                 </h3>
-                <div class="form-box" style="margin: 0; max-width: 800px;">
+                <form class="form-box" style="margin: 0; max-width: 800px;" onsubmit="return handlePrescriptionSubmit(event)">
                     <div class="input-group">
                         <label>اختر المريض المستهدف</label>
-                        <select style="font-weight: bold; background: var(--bg-color);">
-                            <option>سالم عبدالله - MT-12345</option>
-                            <option>يوسف محمود - MT-98765</option>
+                        <select name="patient_id" style="font-weight: bold; background: var(--bg-color);" required>
+                            <option value="MT-12345">سالم عبدالله - MT-12345</option>
+                            <option value="MT-98765">يوسف محمود - MT-98765</option>
                         </select>
                     </div>
 
                     <div class="input-group">
                         <label>التشخيص / الملاحظات السريرية</label>
-                        <textarea rows="2" placeholder="اكتب تشخيص الحالة باختصار هنا..."></textarea>
+                        <textarea name="diagnosis" rows="2" placeholder="اكتب تشخيص الحالة باختصار هنا..." required></textarea>
                     </div>
 
                     <h4
@@ -250,31 +250,30 @@
                             <div style="display: flex; gap: 10px; margin-bottom: 10px;">
                                 <div class="input-group" style="flex: 2; margin: 0;">
                                     <label style="font-size: 12px; color: var(--text-muted);">اسم الدواء</label>
-                                    <input type="text" placeholder="مثال: أوجمنتين 1 جم">
+                                    <input type="text" name="med_name[]" placeholder="مثال: أوجمنتين 1 جم" required>
                                 </div>
                                 <div class="input-group" style="flex: 1; margin: 0;">
                                     <label style="font-size: 12px; color: var(--text-muted);">الجرعة</label>
-                                    <input type="text" placeholder="حبة واحدة">
+                                    <input type="text" name="med_dose[]" placeholder="حبة واحدة" required>
                                 </div>
                             </div>
                             <div style="display: flex; gap: 10px;">
                                 <div class="input-group" style="flex: 1; margin: 0;">
                                     <label style="font-size: 12px; color: var(--text-muted);">التكرار</label>
-                                    <input type="text" placeholder="كل 12 ساعة">
+                                    <input type="text" name="med_freq[]" placeholder="كل 12 ساعة" required>
                                 </div>
                                 <div class="input-group" style="flex: 2; margin: 0;">
-                                    <label style="font-size: 12px; color: var(--text-muted);">المدة / ملاحظات
-                                        الاستخدام</label>
-                                    <input type="text" placeholder="لمدة 7 أيام - بعد الأكل">
+                                    <label style="font-size: 12px; color: var(--text-muted);">المدة / ملاحظات الاستخدام</label>
+                                    <input type="text" name="med_notes[]" placeholder="لمدة 7 أيام - بعد الأكل">
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <button class="btn" onclick="alert('تم حفظ الروشتة وإرسالها لملف المريض بنجاح!')"
+                    <button type="submit" class="btn"
                         style="width: 100%; font-size: 16px; padding: 12px;">حفظ واعتماد الروشتة <i
                             class="fa-solid fa-file-signature"></i></button>
-                </div>
+                </form>
             </section>
 
             <!-- CHAT SECTION -->
@@ -477,83 +476,84 @@
             <section id="sec-profile" class="content-section" style="display:none;">
                 <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-user-gear"></i> إعدادات الحساب (الطبيب)</h3>
 
-                <div class="grid-container">
-                    <!-- Profile Picture & Info -->
-                    <div class="form-box" style="margin: 0; text-align: center;">
-                        <div style="position: relative; display: inline-block; margin-bottom: 20px;">
-                            <img src="https://ui-avatars.com/api/?name=Dr+Ahmed&background=3b82f6&color=fff"
-                                id="docProfileImage" alt="Profile"
-                                style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary); box-shadow: var(--shadow);">
-                            <label for="uploadProfileDoc"
-                                style="position: absolute; bottom: 0; right: 0; background: var(--success); color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 3px solid var(--card-bg); transition: var(--transition);">
-                                <i class="fa-solid fa-camera"></i>
-                            </label>
-                            <input type="file" id="uploadProfileDoc" style="display: none;" accept="image/*"
-                                onchange="alert('تم اختيار الصورة! سيتم تغييرها قريباً.')">
+                <form id="doctorProfileForm" onsubmit="return handleDoctorProfileUpdate(event)">
+                    <div class="grid-container">
+                        <!-- Profile Picture & Info -->
+                        <div class="form-box" style="margin: 0; text-align: center;">
+                            <div style="position: relative; display: inline-block; margin-bottom: 20px;">
+                                <img src="https://ui-avatars.com/api/?name=Dr+Ahmed&background=3b82f6&color=fff"
+                                    id="docProfileImage" alt="Profile"
+                                    style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary); box-shadow: var(--shadow);">
+                                <label for="uploadProfileDoc"
+                                    style="position: absolute; bottom: 0; right: 0; background: var(--success); color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 3px solid var(--card-bg); transition: var(--transition);">
+                                    <i class="fa-solid fa-camera"></i>
+                                </label>
+                                <input type="file" id="uploadProfileDoc" name="profile_picture" style="display: none;" accept="image/*"
+                                    onchange="alert('تم اختيار الصورة! سيتم تغييرها قريباً.')">
+                            </div>
+                            <h3 style="margin-bottom: 5px;">د. أحمد سمير</h3>
+                            <p style="color: var(--text-muted); font-size: 14px;">استشاري القلب والأوعية الدموية</p>
+                            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">dr.ahmed@medtrack.com
+                            </p>
                         </div>
-                        <h3 style="margin-bottom: 5px;">د. أحمد سمير</h3>
-                        <p style="color: var(--text-muted); font-size: 14px;">استشاري القلب والأوعية الدموية</p>
-                        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">dr.ahmed@medtrack.com
-                        </p>
-                    </div>
 
-                    <!-- Change Password & Info -->
-                    <div class="form-box" style="margin: 0;">
-                        <h4 style="margin-bottom: 20px; color: var(--text-main);"><i class="fa-solid fa-lock"></i> تحديث
-                            كلمة المرور وبيانات الاتصال</h4>
-                        <div class="input-group">
-                            <label>رقم الهاتف المخصص للعيادة</label>
-                            <input type="tel" value="01012345678">
+                        <!-- Change Password & Info -->
+                        <div class="form-box" style="margin: 0;">
+                            <h4 style="margin-bottom: 20px; color: var(--text-main);"><i class="fa-solid fa-lock"></i> تحديث
+                                كلمة المرور وبيانات الاتصال</h4>
+                            <div class="input-group">
+                                <label>رقم الهاتف المخصص للعيادة</label>
+                                <input type="tel" name="phone" value="01012345678">
+                            </div>
+                            <div class="input-group">
+                                <label>كلمة المرور الحالية</label>
+                                <input type="password" name="current_password" placeholder="أدخل كلمة المرور الحالية...">
+                            </div>
+                            <div class="input-group">
+                                <label>كلمة المرور الجديدة</label>
+                                <input type="password" name="new_password" placeholder="أدخل كلمة المرور الجديدة...">
+                            </div>
+                            <div class="input-group">
+                                <label>تأكيد كلمة المرور الجديدة</label>
+                                <input type="password" name="confirm_password" placeholder="أعد إدخال كلمة المرور الجديدة...">
+                            </div>
                         </div>
-                        <div class="input-group">
-                            <label>كلمة المرور الحالية</label>
-                            <input type="password" placeholder="أدخل كلمة المرور الحالية...">
-                        </div>
-                        <div class="input-group">
-                            <label>كلمة المرور الجديدة</label>
-                            <input type="password" placeholder="أدخل كلمة المرور الجديدة...">
-                        </div>
-                        <div class="input-group">
-                            <label>تأكيد كلمة المرور الجديدة</label>
-                            <input type="password" placeholder="أعد إدخال كلمة المرور الجديدة...">
-                        </div>
-                    </div>
 
-                    <!-- CV Settings inside Profile -->
-                    <div class="form-box" style="margin: 0; grid-column: 1 / -1;">
-                        <h4 style="margin-bottom: 20px; color: var(--text-main);"><i
-                                class="fa-solid fa-id-card-clip"></i> إعداد السيرة الذاتية وتفاصيل الطبيب</h4>
-                        <p style="margin-bottom: 20px; color: var(--text-muted); font-size: 13px;">هذه البيانات ستظهر
-                            للمرضى عند حجز موعد لتساعدهم في التعرف على خبراتك بشكل احترافي.</p>
+                        <!-- CV Settings inside Profile -->
+                        <div class="form-box" style="margin: 0; grid-column: 1 / -1;">
+                            <h4 style="margin-bottom: 20px; color: var(--text-main);"><i
+                                    class="fa-solid fa-id-card-clip"></i> إعداد السيرة الذاتية وتفاصيل الطبيب</h4>
+                            <p style="margin-bottom: 20px; color: var(--text-muted); font-size: 13px;">هذه البيانات ستظهر
+                                للمرضى عند حجز موعد لتساعدهم في التعرف على خبراتك بشكل احترافي.</p>
 
-                        <div class="input-group">
-                            <label>النبذة التعريفية (Bio)</label>
-                            <textarea rows="2"
-                                placeholder="اكتب نبذة مختصرة عنك...">استشاري أول القلب والأوعية الدموية، متخصص في الحالات الحرجة.</textarea>
-                        </div>
-                        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                            <div class="input-group" style="flex: 1; min-width: 250px;">
-                                <label>المؤهلات العلمية</label>
-                                <textarea rows="3" placeholder="مثال: دكتوراه في جراحة القلب والأوعية الدموية...">- دكتوراه أمراض القلب والأوعية الدموية (2015)
+                            <div class="input-group">
+                                <label>النبذة التعريفية (Bio)</label>
+                                <textarea name="bio" rows="2"
+                                    placeholder="اكتب نبذة مختصرة عنك...">استشاري أول القلب والأوعية الدموية، متخصص في الحالات الحرجة.</textarea>
+                            </div>
+                            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                                <div class="input-group" style="flex: 1; min-width: 250px;">
+                                    <label>المؤهلات العلمية</label>
+                                    <textarea name="qualifications" rows="3" placeholder="مثال: دكتوراه في جراحة القلب والأوعية الدموية...">- دكتوراه أمراض القلب والأوعية الدموية (2015)
 - زمالة الكلية الملكية للأطباء (MRCP)</textarea>
-                            </div>
-                            <div class="input-group" style="flex: 1; min-width: 250px;">
-                                <label>الخبرات السابقة</label>
-                                <textarea rows="3" placeholder="مثال: رئيس قسم الجراحة במستشفى السلام...">- رئيس قسم الرعاية المركزة للقلب (2018 - 2023)
+                                </div>
+                                <div class="input-group" style="flex: 1; min-width: 250px;">
+                                    <label>الخبرات السابقة</label>
+                                    <textarea name="experience" rows="3" placeholder="مثال: رئيس قسم الجراحة במستشفى السلام...">- رئيس قسم الرعاية المركزة للقلب (2018 - 2023)
 - أستاذ مساعد بكلية الطب</textarea>
+                                </div>
                             </div>
-                        </div>
-                        <div class="input-group">
-                            <label>التخصصات الدقيقة</label>
-                            <input type="text"
-                                value="قسطرة القلب العلاجية، الموجات الصوتية على القلب (الإيكو)، تركيب الدعامات">
+                            <div class="input-group">
+                                <label>التخصصات الدقيقة</label>
+                                <input type="text" name="sub_specialties"
+                                    value="قسطرة القلب العلاجية، الموجات الصوتية على القلب (الإيكو)، تركيب الدعامات">
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <button class="btn" style="width: 100%; margin-top: 20px; padding: 15px; font-size: 16px;"
-                    onclick="alert('تم حفظ كافة التعديلات الخاصة بالطبيب والسيرة الذاتية بنجاح!')">حفظ جميع التعديلات <i
-                        class="fa-solid fa-floppy-disk"></i></button>
+                    <button type="submit" class="btn" style="width: 100%; margin-top: 20px; padding: 15px; font-size: 16px;">حفظ جميع التعديلات <i
+                            class="fa-solid fa-floppy-disk"></i></button>
+                </form>
             </section>
         </main>
     </div>
@@ -675,7 +675,7 @@
         </div>
     </div>
 
-    <script src="../script.js"></script>
+    <script src="script.js"></script>
     <script>
         function showSec(id, el) {
             document.querySelectorAll('.sidebar ul li a').forEach(a => a.classList.remove('active'));
@@ -721,26 +721,39 @@
         }
 
         let currentTargetInput = '';
-        let html5QrcodeScanner;
+        let html5QrCode;
         function startQRScanner(inputId) {
             currentTargetInput = inputId;
             document.getElementById('qrScannerModal').style.display = 'flex';
-            if (html5QrcodeScanner) {
-                html5QrcodeScanner.clear();
+            
+            if (!html5QrCode) {
+                html5QrCode = new Html5Qrcode("qr-reader");
             }
+            
             const qrboxSize = window.innerWidth < 500 ? 200 : 250;
-            html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: { width: qrboxSize, height: qrboxSize } }, false);
-            html5QrcodeScanner.render((decodedText) => {
-                document.getElementById(currentTargetInput).value = decodedText;
+            
+            html5QrCode.start(
+                { facingMode: "environment" }, 
+                { fps: 10, qrbox: { width: qrboxSize, height: qrboxSize } },
+                (decodedText) => {
+                    document.getElementById(currentTargetInput).value = decodedText;
+                    closeQRScanner();
+                    alert('تم مسح كود المريض بنجاح: ' + decodedText);
+                },
+                (errorMessage) => {
+                    // Ignore background scan errors
+                }
+            ).catch(err => {
+                alert('عذراً، لا يمكن الوصول للكاميرا. يرجى إعطاء صلاحية الكاميرا للمتصفح.');
                 closeQRScanner();
-                alert('تم مسح كود المريض بنجاح: ' + decodedText);
-            }, () => { });
+            });
         }
         function closeQRScanner() {
             document.getElementById('qrScannerModal').style.display = 'none';
-            if (html5QrcodeScanner) {
-                html5QrcodeScanner.clear();
-                html5QrcodeScanner = null;
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().then(() => {
+                    html5QrCode.clear();
+                }).catch(err => console.log("Stop failed: ", err));
             }
         }
 
@@ -771,14 +784,14 @@
     </style>
     <!-- Diagnose Modal -->
     <div id="diagnoseModal" class="modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
-        <div style="background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 500px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+        <form onsubmit="return saveDiagnosis(event)" style="background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 500px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h3 style="margin: 0; color: var(--primary);">تشخيص المريض: <span id="diagPatientName"></span></h3>
                 <i class="fa-solid fa-xmark" style="cursor: pointer; font-size: 20px; color: var(--text-muted);" onclick="document.getElementById('diagnoseModal').style.display='none'"></i>
             </div>
-            <textarea id="diagText" rows="4" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 20px;" placeholder="اكتب التشخيص الطبي هنا..."></textarea>
-            <button class="btn" style="width: 100%;" onclick="saveDiagnosis()">حفظ وإرسال للمريض</button>
-        </div>
+            <textarea id="diagText" name="diagnosis_text" rows="4" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 20px;" placeholder="اكتب التشخيص الطبي هنا..." required></textarea>
+            <button type="submit" class="btn" style="width: 100%;">حفظ وإرسال للمريض</button>
+        </form>
     </div>
 
     <script>
@@ -792,24 +805,40 @@
             document.getElementById('diagnoseModal').style.display = 'flex';
         }
 
-        function saveDiagnosis() {
+        async function saveDiagnosis(e) {
+            e.preventDefault();
             const diagnosis = document.getElementById('diagText').value;
             if(!diagnosis.trim()) { alert('يرجى كتابة التشخيص'); return; }
             
-            // In a real app, you would send this to a backend.
-            // Here, we save to localStorage to simulate passing data to patients.html
             const diagnosisData = {
                 text: diagnosis,
                 doctor: 'د. أحمد سمير',
                 date: new Date().toLocaleDateString('ar-EG')
             };
-            localStorage.setItem('patientDiagnosis', JSON.stringify(diagnosisData));
-            
-            document.getElementById('diagnoseModal').style.display = 'none';
-            alert('تم حفظ التشخيص بنجاح، وسيظهر الآن في ملف المريض.');
+            try {
+                if (window.dbAddRecord) {
+                    await window.dbAddRecord('medtrack_diagnoses', diagnosisData);
+                } else {
+                    localStorage.setItem('patientDiagnosis', JSON.stringify(diagnosisData));
+                }
+                document.getElementById('diagnoseModal').style.display = 'none';
+                alert('تم حفظ التشخيص بنجاح، وسيظهر الآن في ملف المريض.');
+            } catch(e) {
+                alert(e.message);
+            }
         }
 
-        function confirmAppointment(patientName, dateTime) {
+        function handlePrescriptionSubmit(e) {
+            e.preventDefault();
+            alert('تم حفظ الروشتة وإرسالها لملف المريض بنجاح!');
+        }
+
+        function handleDoctorProfileUpdate(e) {
+            e.preventDefault();
+            alert('تم حفظ كافة التعديلات الخاصة بالطبيب والسيرة الذاتية بنجاح!');
+        }
+
+        async function confirmAppointment(patientName, dateTime) {
             if(!dateTime) { alert('يرجى تحديد تاريخ ووقت الموعد'); return; }
             
             // Format datetime locally
@@ -822,11 +851,19 @@
                 datetime: formattedDate,
                 status: 'مؤكد'
             };
-            localStorage.setItem('patientAppointment', JSON.stringify(apptData));
-            
-            alert('تم الموافقة على الموعد: ' + formattedDate + '\nوإرسال إشعار للمريض.');
+            try {
+                if (window.dbAddRecord) {
+                    await window.dbAddRecord('medtrack_appointments', apptData);
+                } else {
+                    localStorage.setItem('patientAppointment', JSON.stringify(apptData));
+                }
+                alert('تم الموافقة على الموعد: ' + formattedDate + '\nوإرسال إشعار للمريض.');
+            } catch(e) {
+                alert(e.message);
+            }
         }
     </script>
+    <script type="module" src="firebase-config.js"></script>
     <!-- Emergency Call Button -->
     <a href="tel:997" class="emergency-btn" title="اتصال بالطوارئ والاسعاف">
         <i class="fa-solid fa-truck-medical"></i>

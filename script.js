@@ -45,8 +45,7 @@ window.showToast = function(msg) {
 
 document.addEventListener('DOMContentLoaded', () => {
     // Inject Professional Styles and Loader
-    const isRoot = window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || !window.location.pathname.includes('/pages/');
-    const logoPath = isRoot ? 'logo.svg.png' : '../logo.svg.png';
+    const logoPath = 'logo.svg.png';
 
     const loaderHtml = `
         <div id="global-loader" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-color); z-index:999999; display:flex; flex-direction:column; justify-content:center; align-items:center; transition: opacity 0.5s ease;">
@@ -114,35 +113,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const toggleBtn = document.createElement('button');
         toggleBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
-        toggleBtn.className = 'btn mobile-menu-btn';
-        toggleBtn.style.padding = '8px 12px';
+        toggleBtn.className = 'btn mobile-menu-btn floating-menu-btn';
+        toggleBtn.style.cssText = 'position: fixed; top: 20px; left: 20px; z-index: 1000; width: 50px; height: 50px; border-radius: 50%; font-size: 20px; box-shadow: 0 5px 20px rgba(10, 124, 255, 0.4); background: var(--primary); color: white; justify-content: center; align-items: center; border: none; outline: none; cursor: pointer;';
+        document.body.appendChild(toggleBtn);
         
         const closeSidebar = () => {
             sidebar.classList.remove('sidebar-active');
             overlay.classList.remove('active');
+            toggleBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
         };
 
         const toggleSidebar = () => {
             const isActive = sidebar.classList.toggle('sidebar-active');
-            if(isActive) overlay.classList.add('active');
-            else overlay.classList.remove('active');
+            if(isActive) {
+                overlay.classList.add('active');
+                toggleBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+            } else {
+                overlay.classList.remove('active');
+                toggleBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
+            }
         };
 
         toggleBtn.onclick = toggleSidebar;
         overlay.onclick = closeSidebar;
-
-        // Place the toggle button nicely beside the header title
-        const h2 = header.querySelector('h2');
-        if (h2) {
-            const titleWrapper = document.createElement('div');
-            titleWrapper.style.cssText = 'display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 15px;';
-            header.insertBefore(titleWrapper, h2);
-            titleWrapper.appendChild(toggleBtn);
-            titleWrapper.appendChild(h2);
-            h2.style.margin = '0';
-        } else {
-            header.insertBefore(toggleBtn, header.firstChild);
-        }
         
         // Close sidebar when clicking a link inside it on mobile
         const sidebarLinks = sidebar.querySelectorAll('a');
@@ -265,59 +258,54 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (chatInput && chatBtn && chatContainer) {
-            const loadMessages = () => {
-                const msgs = JSON.parse(localStorage.getItem('medtrack_chat') || '[]');
-                if (msgs.length > 0) {
+            if (window.dbListenMessages) {
+                let initialLoad = true;
+                window.dbListenMessages('medtrack_chat', (msgs) => {
                     chatContainer.innerHTML = '';
-                    msgs.forEach(msg => {
-                        const div = document.createElement('div');
-                        const isMine = (isDoctor && msg.sender === 'doctor') || (!isDoctor && msg.sender === 'patient');
+                    if (msgs && msgs.length > 0) {
+                        msgs.forEach(msg => {
+                            const div = document.createElement('div');
+                            const isMine = (isDoctor && msg.sender === 'doctor') || (!isDoctor && msg.sender === 'patient');
+                            
+                            if (isMine) {
+                                div.style = 'align-self: flex-end; background: var(--primary); color: white; padding: 10px 15px; border-radius: 15px; border-top-left-radius: 0; box-shadow: var(--shadow);';
+                            } else {
+                                div.style = 'align-self: flex-start; background: var(--card-bg); color: var(--text-main); padding: 10px 15px; border-radius: 15px; border-top-right-radius: 0; box-shadow: var(--shadow);';
+                            }
+                            div.innerText = msg.text;
+                            chatContainer.appendChild(div);
+                        });
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
                         
-                        if (isMine) {
-                            div.style = 'align-self: flex-end; background: var(--primary); color: white; padding: 10px 15px; border-radius: 15px; border-top-left-radius: 0; box-shadow: var(--shadow);';
-                        } else {
-                            div.style = 'align-self: flex-start; background: var(--card-bg); color: var(--text-main); padding: 10px 15px; border-radius: 15px; border-top-right-radius: 0; box-shadow: var(--shadow);';
+                        if (!initialLoad) {
+                            const lastMsg = msgs[msgs.length - 1];
+                            if (lastMsg && ((isDoctor && lastMsg.sender === 'patient') || (!isDoctor && lastMsg.sender === 'doctor'))) {
+                                window.showToast('رسالة جديدة وردت الآن! <i class="fa-solid fa-envelope"></i>');
+                            }
                         }
-                        div.innerText = msg.text;
-                        chatContainer.appendChild(div);
-                    });
-                    chatContainer.scrollTop = chatContainer.scrollHeight;
-                }
-            };
-            
-            loadMessages(); // Load initially
-
-            const sendMessage = () => {
-                const text = chatInput.value.trim();
-                if (!text) return;
-                
-                const msgs = JSON.parse(localStorage.getItem('medtrack_chat') || '[]');
-                msgs.push({
-                    sender: isDoctor ? 'doctor' : 'patient',
-                    text: text,
-                    time: new Date().toISOString()
-                });
-                localStorage.setItem('medtrack_chat', JSON.stringify(msgs));
-                
-                chatInput.value = '';
-                loadMessages();
-            };
-
-            chatBtn.addEventListener('click', sendMessage);
-            chatInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') sendMessage();
-            });
-            
-            window.addEventListener('storage', (e) => {
-                if (e.key === 'medtrack_chat') {
-                    const msgs = JSON.parse(e.newValue || '[]');
-                    const lastMsg = msgs[msgs.length - 1];
-                    if (lastMsg && ((isDoctor && lastMsg.sender === 'patient') || (!isDoctor && lastMsg.sender === 'doctor'))) {
-                        window.showToast('رسالة جديدة وردت الآن! <i class="fa-solid fa-envelope"></i>');
                     }
-                    loadMessages();
-                }
-            });
+                    initialLoad = false;
+                });
+
+                const sendMessage = async () => {
+                    const text = chatInput.value.trim();
+                    if (!text) return;
+                    try {
+                        await window.dbAddMessage('medtrack_chat', {
+                            sender: isDoctor ? 'doctor' : 'patient',
+                            text: text
+                        });
+                        chatInput.value = '';
+                    } catch (e) {
+                        alert(e.message);
+                    }
+                };
+
+                chatBtn.addEventListener('click', sendMessage);
+                chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') sendMessage();
+                });
+            }
         }
     }
 
@@ -340,50 +328,46 @@ document.addEventListener('DOMContentLoaded', () => {
         const supContainer = supportChatSec.querySelector('div[style*="overflow-y: auto"]');
         
         if (supInput && supBtn && supContainer) {
-            const loadSupportMessages = () => {
-                const msgs = JSON.parse(localStorage.getItem('medtrack_support') || '[]');
-                if (msgs.length > 0) {
+            if (window.dbListenMessages) {
+                window.dbListenMessages('medtrack_support', (msgs) => {
                     supContainer.innerHTML = '';
-                    msgs.forEach(msg => {
-                        const div = document.createElement('div');
-                        const isMine = (isSupportAdmin && msg.sender === 'admin') || (!isSupportAdmin && msg.sender === 'patient');
-                        
-                        if (isMine) {
-                            div.style = 'align-self: flex-end; background: var(--primary); color: white; padding: 10px 15px; border-radius: 15px; border-top-left-radius: 0; box-shadow: var(--shadow);';
-                            div.innerHTML = `<strong>${isSupportAdmin ? 'أنت (الإدارة)' : 'أنت'}:</strong><br>${msg.text}`;
-                        } else {
-                            div.style = 'align-self: flex-start; background: var(--card-bg); color: var(--text-main); padding: 10px 15px; border-radius: 15px; border-top-right-radius: 0; box-shadow: var(--shadow);';
-                            div.innerHTML = `<strong style="color:var(--warning);"><i class="fa-solid fa-${isSupportAdmin ? 'user' : 'headset'}"></i> ${isSupportAdmin ? 'المريض' : 'موظف الدعم'}:</strong><br>${msg.text}`;
-                        }
-                        supContainer.appendChild(div);
-                    });
-                    supContainer.scrollTop = supContainer.scrollHeight;
-                }
-            };
-            
-            loadSupportMessages();
-
-            const sendSupportMsg = () => {
-                const text = supInput.value.trim();
-                if (!text) return;
-                const msgs = JSON.parse(localStorage.getItem('medtrack_support') || '[]');
-                msgs.push({
-                    sender: isSupportAdmin ? 'admin' : 'patient',
-                    text: text,
-                    time: new Date().toISOString()
+                    if (msgs && msgs.length > 0) {
+                        msgs.forEach(msg => {
+                            const div = document.createElement('div');
+                            const isMine = (isSupportAdmin && msg.sender === 'admin') || (!isSupportAdmin && msg.sender === 'patient');
+                            
+                            if (isMine) {
+                                div.style = 'align-self: flex-end; background: var(--primary); color: white; padding: 10px 15px; border-radius: 15px; border-top-left-radius: 0; box-shadow: var(--shadow);';
+                                div.innerHTML = `<strong>${isSupportAdmin ? 'أنت (الإدارة)' : 'أنت'}:</strong><br>${msg.text}`;
+                            } else {
+                                div.style = 'align-self: flex-start; background: var(--card-bg); color: var(--text-main); padding: 10px 15px; border-radius: 15px; border-top-right-radius: 0; box-shadow: var(--shadow);';
+                                div.innerHTML = `<strong style="color:var(--warning);"><i class="fa-solid fa-${isSupportAdmin ? 'user' : 'headset'}"></i> ${isSupportAdmin ? 'المريض' : 'موظف الدعم'}:</strong><br>${msg.text}`;
+                            }
+                            supContainer.appendChild(div);
+                        });
+                        supContainer.scrollTop = supContainer.scrollHeight;
+                    }
                 });
-                localStorage.setItem('medtrack_support', JSON.stringify(msgs));
-                supInput.value = '';
-                loadSupportMessages();
-            };
 
-            supBtn.addEventListener('click', sendSupportMsg);
-            supInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') sendSupportMsg();
-            });
-            window.addEventListener('storage', (e) => {
-                if (e.key === 'medtrack_support') loadSupportMessages();
-            });
+                const sendSupportMsg = async () => {
+                    const text = supInput.value.trim();
+                    if (!text) return;
+                    try {
+                        await window.dbAddMessage('medtrack_support', {
+                            sender: isSupportAdmin ? 'admin' : 'patient',
+                            text: text
+                        });
+                        supInput.value = '';
+                    } catch(e) {
+                        alert(e.message);
+                    }
+                };
+
+                supBtn.addEventListener('click', sendSupportMsg);
+                supInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') sendSupportMsg();
+                });
+            }
         }
     }
 
@@ -394,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (doctorPrescriptionSec) {
         const savePrescriptionBtn = document.querySelector('#sec-prescriptions button[onclick*="حفظ واعتماد الروشتة"]');
         if (savePrescriptionBtn) {
-            savePrescriptionBtn.addEventListener('click', () => {
+            savePrescriptionBtn.addEventListener('click', async () => {
                 const medItems = document.querySelectorAll('#medicationsContainer .med-item');
                 const meds = [];
                 medItems.forEach(item => {
@@ -409,33 +393,33 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
                 if (meds.length > 0) {
-                    let allMeds = JSON.parse(localStorage.getItem('medtrack_meds') || '[]');
-                    allMeds = allMeds.concat(meds);
-                    localStorage.setItem('medtrack_meds', JSON.stringify(allMeds));
+                    try {
+                        for(let med of meds) {
+                            await window.dbAddRecord('medtrack_meds', med);
+                        }
+                        alert('تم حفظ الروشتة وإرسالها لملف المريض بنجاح!');
+                    } catch (e) {
+                        alert(e.message);
+                    }
                 }
             });
         }
     }
 
     if (patientMedsSec) {
-        const loadMeds = () => {
-            const tbody = patientMedsSec.querySelector('tbody');
-            if (tbody) {
-                const meds = JSON.parse(localStorage.getItem('medtrack_meds') || '[]');
-                if (meds.length > 0) {
-                    tbody.innerHTML = ''; // Clear default if meds exist
+        if (window.dbListenRecords) {
+            window.dbListenRecords('medtrack_meds', (meds) => {
+                const tbody = patientMedsSec.querySelector('tbody');
+                if (tbody && meds && meds.length > 0) {
+                    tbody.innerHTML = '';
                     meds.forEach(med => {
                         const tr = document.createElement('tr');
                         tr.innerHTML = `<td>${med.name}</td><td>${med.dose}</td><td>${med.freq}</td><td>${med.duration}</td>`;
                         tbody.appendChild(tr);
                     });
                 }
-            }
-        };
-        loadMeds();
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'medtrack_meds') loadMeds();
-        });
+            });
+        }
     }
 
     // --- Labs & X-Rays Linking ---
@@ -452,35 +436,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 const newBtn = btn.cloneNode(true);
                 btn.parentNode.replaceChild(newBtn, btn);
                 
-                newBtn.addEventListener('click', () => {
+                newBtn.addEventListener('click', async () => {
                     const input = newBtn.previousElementSibling;
                     if (input && input.type === 'file' && input.files && input.files.length > 0) {
                         const isXray = newBtn.innerText.includes('أشعة');
-                        const labs = JSON.parse(localStorage.getItem('medtrack_labs') || '[]');
-                        labs.push({
-                            type: isXray ? 'أشعة' : 'تحليل',
-                            name: isXray ? 'أشعة مرفوعة حديثاً' : 'تحليل مرفوع حديثاً',
-                            date: new Date().toLocaleDateString('ar-EG'),
-                            patient: 'سالم عبدالله (MT-12345)',
-                            uploadedBy: 'المريض'
-                        });
-                        localStorage.setItem('medtrack_labs', JSON.stringify(labs));
-                        alert('تم رفع ' + (isXray ? 'الأشعة' : 'التحليل') + ' بنجاح وسيظهر للطبيب.');
+                        try {
+                            await window.dbAddRecord('medtrack_labs', {
+                                type: isXray ? 'أشعة' : 'تحليل',
+                                name: isXray ? 'أشعة مرفوعة حديثاً' : 'تحليل مرفوع حديثاً',
+                                date: new Date().toLocaleDateString('ar-EG'),
+                                patient: 'سالم عبدالله (MT-12345)',
+                                uploadedBy: 'المريض'
+                            });
+                            alert('تم رفع ' + (isXray ? 'الأشعة' : 'التحليل') + ' بنجاح وسيظهر للطبيب.');
+                        } catch (e) {
+                            alert(e.message);
+                        }
                     } else {
                         alert('يرجى اختيار ملف أولاً للرفع.');
                     }
                 });
             }
         });
-            }
-        });
+    }
         
-        // Patient Dashboard Labs View Logic
         const patientLabsTableBody = document.getElementById('patientLabsTableBody');
-        if (patientLabsTableBody) {
-            const loadPatientLabs = () => {
-                const labs = JSON.parse(localStorage.getItem('medtrack_labs') || '[]');
-                // Render labs uploaded by the lab dashboard (or doctor)
+        if (patientLabsTableBody && window.dbListenRecords) {
+            window.dbListenRecords('medtrack_labs', (labs) => {
                 const hospitalLabs = labs.filter(lab => lab.uploadedBy === 'المختبر' || lab.uploadedBy === 'المستشفى');
                 if (hospitalLabs.length > 0) {
                     patientLabsTableBody.innerHTML = '';
@@ -490,16 +472,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         patientLabsTableBody.appendChild(tr);
                     });
                 }
-            };
-            loadPatientLabs();
-            window.addEventListener('storage', (e) => {
-                if (e.key === 'medtrack_labs') loadPatientLabs();
             });
         }
-    }
 
     // --- Lab Dashboard Upload Logic ---
-    window.uploadLabFromDashboard = function() {
+    window.uploadLabFromDashboard = async function() {
         const patientId = document.getElementById('patientIdInput');
         const labType = document.getElementById('labTypeSelect');
         const fileInput = document.getElementById('labFileUpload');
@@ -516,62 +493,53 @@ document.addEventListener('DOMContentLoaded', () => {
         const typeValue = labType ? labType.value : 'أشعة/تحليل';
         const isXray = typeValue.includes('أشعة') || typeValue.includes('رنين');
         
-        const labs = JSON.parse(localStorage.getItem('medtrack_labs') || '[]');
-        labs.push({
-            type: isXray ? 'أشعة' : 'تحليل',
-            name: typeValue,
-            date: new Date().toLocaleDateString('ar-EG'),
-            patient: `سالم عبدالله (${patientId.value})`,
-            uploadedBy: 'المختبر'
-        });
-        localStorage.setItem('medtrack_labs', JSON.stringify(labs));
-        
-        // Dispatch storage event manually for same-page updates (if needed)
-        window.dispatchEvent(new Event('storage'));
-        
-        alert('تم رفع النتيجة بنجاح! ستظهر الآن في ملف المريض وعند أطبائه.');
-        patientId.value = '';
-        fileInput.value = '';
+        try {
+            await window.dbAddRecord('medtrack_labs', {
+                type: isXray ? 'أشعة' : 'تحليل',
+                name: typeValue,
+                date: new Date().toLocaleDateString('ar-EG'),
+                patient: `سالم عبدالله (${patientId.value})`,
+                uploadedBy: 'المختبر'
+            });
+            alert('تم رفع النتيجة بنجاح! ستظهر الآن في ملف المريض وعند أطبائه.');
+            patientId.value = '';
+            fileInput.value = '';
+        } catch (e) {
+            alert(e.message);
+        }
     };
 
     // Doctor view logic
-    if (window.location.pathname.includes('doctor.html') && doctorLabsSec) {
-        const loadDoctorLabs = () => {
+    if (window.location.pathname.includes('doctor.html') && doctorLabsSec && window.dbListenRecords) {
+        window.dbListenRecords('medtrack_labs', (labs) => {
             const container = doctorLabsSec.querySelector('.grid-container');
-            if (container) {
-                const labs = JSON.parse(localStorage.getItem('medtrack_labs') || '[]');
-                if (labs.length > 0) {
-                    container.querySelectorAll('.added-lab').forEach(el => el.remove());
-                    labs.forEach(lab => {
-                        const div = document.createElement('div');
-                        div.className = 'stat-box added-lab';
-                        div.style.textAlign = 'right';
-                        div.style.position = 'relative';
-                        const icon = lab.type === 'أشعة' ? 'fa-x-ray' : 'fa-file-medical';
-                        const color = lab.type === 'أشعة' ? 'var(--primary)' : 'var(--success)';
-                        div.innerHTML = `
-                            <span style="position: absolute; top: 15px; left: 15px; background: var(--danger); color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">جديد</span>
-                            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                                <i class="fa-solid ${icon}" style="font-size: 40px; color: ${color};"></i>
-                                <div>
-                                    <h3 style="margin: 0;">${lab.name}</h3>
-                                    <p style="color: var(--text-muted); font-size: 13px;">المريض: ${lab.patient}</p>
-                                </div>
+            if (container && labs.length > 0) {
+                container.querySelectorAll('.added-lab').forEach(el => el.remove());
+                labs.forEach(lab => {
+                    const div = document.createElement('div');
+                    div.className = 'stat-box added-lab';
+                    div.style.textAlign = 'right';
+                    div.style.position = 'relative';
+                    const icon = lab.type === 'أشعة' ? 'fa-x-ray' : 'fa-file-medical';
+                    const color = lab.type === 'أشعة' ? 'var(--primary)' : 'var(--success)';
+                    div.innerHTML = `
+                        <span style="position: absolute; top: 15px; left: 15px; background: var(--danger); color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">جديد</span>
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                            <i class="fa-solid ${icon}" style="font-size: 40px; color: ${color};"></i>
+                            <div>
+                                <h3 style="margin: 0;">${lab.name}</h3>
+                                <p style="color: var(--text-muted); font-size: 13px;">المريض: ${lab.patient}</p>
                             </div>
-                            <p style="color: var(--text-main); font-size: 14px; margin-bottom: 15px;"><i class="fa-solid fa-calendar-day"></i> تاريخ الرفع: ${lab.date}</p>
-                            <div style="display: flex; gap: 10px;">
-                                <button class="btn" style="flex: 1; padding: 8px;" onclick="alert('جاري عرض الملف...')"><i class="fa-solid fa-eye"></i> عرض</button>
-                                <button class="btn btn-outline" style="flex: 1; padding: 8px;" onclick="alert('جاري التنزيل...')"><i class="fa-solid fa-download"></i> تحميل</button>
-                            </div>
-                        `;
-                        container.insertBefore(div, container.firstChild);
-                    });
-                }
+                        </div>
+                        <p style="color: var(--text-main); font-size: 14px; margin-bottom: 15px;"><i class="fa-solid fa-calendar-day"></i> تاريخ الرفع: ${lab.date}</p>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn" style="flex: 1; padding: 8px;" onclick="alert('جاري عرض الملف...')"><i class="fa-solid fa-eye"></i> عرض</button>
+                            <button class="btn btn-outline" style="flex: 1; padding: 8px;" onclick="alert('جاري التنزيل...')"><i class="fa-solid fa-download"></i> تحميل</button>
+                        </div>
+                    `;
+                    container.insertBefore(div, container.firstChild);
+                });
             }
-        };
-        loadDoctorLabs();
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'medtrack_labs') loadDoctorLabs();
         });
     }
 });

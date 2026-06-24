@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بوابة المريض - Med Track</title>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 </head>
 <body>
@@ -13,7 +13,7 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="logo">
-                <img src="../logo.svg.png" alt="Med Track Logo" style="width: 70px; height: auto; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">
+                <img src="logo.svg.png" alt="Med Track Logo" style="width: 70px; height: auto; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">
                 Med Track
             </div>
             <ul>
@@ -30,7 +30,7 @@
                 <p style="font-size: 12px; font-weight: bold; color: var(--text-main);">Medical ID: MT-12345</p>
             </div>
             <ul style="flex: 0;">
-                <li><a href="../index.html" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</a></li>
+                <li><a href="index.html" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</a></li>
             </ul>
         </aside>
 
@@ -68,23 +68,23 @@
             <!-- APPOINTMENTS REQUEST SECTION -->
             <section id="sec-appointments" class="content-section" style="display:none;">
                 <h3 style="margin-bottom: 20px;">طلب ميعاد مع الطبيب</h3>
-                <div class="form-box" style="margin: 0; max-width: 600px;">
+                <form class="form-box" style="margin: 0; max-width: 600px;" onsubmit="return handlePatientApptSubmit(event)">
                     <div class="input-group">
                         <label>الطبيب المعالج</label>
                         <div style="display: flex; gap: 10px;">
-                            <select style="flex: 1;">
-                                <option>د. أحمد سمير (القلب والأوعية)</option>
-                                <option>د. منى شاكر (أطفال)</option>
+                            <select name="doctor" style="flex: 1;" required>
+                                <option value="د. أحمد سمير (القلب والأوعية)">د. أحمد سمير (القلب والأوعية)</option>
+                                <option value="د. منى شاكر (أطفال)">د. منى شاكر (أطفال)</option>
                             </select>
                             <button type="button" class="btn" style="background: var(--warning); padding: 0 15px;" onclick="document.getElementById('cvModal').style.display='flex'"><i class="fa-solid fa-id-card"></i> السيرة الذاتية للطبيب</button>
                         </div>
                     </div>
                     <div class="input-group">
                         <label>سبب الزيارة باختصار</label>
-                        <textarea rows="3" placeholder="أعاني من..."></textarea>
+                        <textarea name="reason" rows="3" placeholder="أعاني من..." required></textarea>
                     </div>
-                    <button class="btn" onclick="alert('تم إرسال الطلب للطبيب، وبانتظار تحديد الموعد (تاريخ/وقت).')">إرسال الطلب</button>
-                </div>
+                    <button type="submit" class="btn">إرسال الطلب</button>
+                </form>
                 
                 <h3 style="margin-top: 40px; margin-bottom: 20px;">حالة الطلبات</h3>
                 <div class="table-container">
@@ -103,16 +103,16 @@
             <!-- LABS & RADIOLOGY SECTION -->
             <section id="sec-labs" class="content-section" style="display:none;">
                 <div class="grid-container">
-                    <div class="form-box" style="margin: 0;">
+                    <form class="form-box" style="margin: 0;" onsubmit="return handlePatientLabUpload(event, 'lab')">
                         <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-flask" style="color:var(--primary);"></i> رفع نتيجة تحليل</h3>
-                        <input type="file" style="margin-bottom: 15px;" accept="image/*,.pdf">
-                        <button class="btn">إضافة التحليل</button>
-                    </div>
-                    <div class="form-box" style="margin: 0;">
+                        <input type="file" name="lab_file" style="margin-bottom: 15px;" accept="image/*,.pdf" required>
+                        <button type="submit" class="btn">إضافة التحليل</button>
+                    </form>
+                    <form class="form-box" style="margin: 0;" onsubmit="return handlePatientLabUpload(event, 'xray')">
                         <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-x-ray" style="color:var(--primary);"></i> رفع نتيجة أشعة</h3>
-                        <input type="file" style="margin-bottom: 15px;" accept="image/*,.pdf">
-                        <button class="btn">إضافة الأشعة</button>
-                    </div>
+                        <input type="file" name="xray_file" style="margin-bottom: 15px;" accept="image/*,.pdf" required>
+                        <button type="submit" class="btn">إضافة الأشعة</button>
+                    </form>
                 </div>
 
                 <h3 style="margin-top: 40px; margin-bottom: 20px;">الأشعة المرفوعة من قبل المستشفى (السجل الداخلي)</h3>
@@ -213,23 +213,23 @@
                 <div class="grid-container">
                     
                     <!-- Submit a new complaint -->
-                    <div class="form-box" style="margin: 0; align-self: start;">
+                    <form class="form-box" style="margin: 0; align-self: start;" onsubmit="return handleSupportSubmit(event)">
                         <h4 style="margin-bottom: 20px; color: var(--text-main);"><i class="fa-solid fa-ticket"></i> تقديم شكوى أو استفسار جديد</h4>
                         <div class="input-group">
                             <label>نوع المشكلة</label>
-                            <select>
-                                <option>مشكلة تقنية في الموقع</option>
-                                <option>شكوى بخصوص موعد طبي أو طبيب</option>
-                                <option>استفسار مالي أو فواتير</option>
-                                <option>أخرى</option>
+                            <select name="issue_type" required>
+                                <option value="مشكلة تقنية في الموقع">مشكلة تقنية في الموقع</option>
+                                <option value="شكوى بخصوص موعد طبي أو طبيب">شكوى بخصوص موعد طبي أو طبيب</option>
+                                <option value="استفسار مالي أو فواتير">استفسار مالي أو فواتير</option>
+                                <option value="أخرى">أخرى</option>
                             </select>
                         </div>
                         <div class="input-group">
                             <label>تفاصيل المشكلة</label>
-                            <textarea rows="5" placeholder="اكتب تفاصيل مشكلتك هنا بوضوح لكي نتمكن من مساعدتك..."></textarea>
+                            <textarea name="issue_details" rows="5" placeholder="اكتب تفاصيل مشكلتك هنا بوضوح لكي نتمكن من مساعدتك..." required></textarea>
                         </div>
-                        <button class="btn" style="width: 100%;" onclick="alert('تم إرسال الشكوى للإدارة بنجاح! سيتم مراجعتها والرد عليك في أسرع وقت.')">إرسال الشكوى <i class="fa-solid fa-paper-plane"></i></button>
-                    </div>
+                        <button type="submit" class="btn" style="width: 100%;">إرسال الشكوى <i class="fa-solid fa-paper-plane"></i></button>
+                    </form>
 
                     <!-- Live Support Chat -->
                     <div class="form-box" style="margin: 0; padding: 0; overflow: hidden; display: flex; flex-direction: column; height: 500px; box-shadow: var(--shadow);">
@@ -262,66 +262,68 @@
             <section id="sec-profile" class="content-section" style="display:none;">
                 <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-user-gear"></i> إعدادات الحساب الشخصي</h3>
                 
-                <div class="grid-container">
-                    <!-- Profile Picture & Info -->
-                    <div class="form-box" style="margin: 0; text-align: center;">
-                        <div style="position: relative; display: inline-block; margin-bottom: 20px;">
-                            <img src="https://ui-avatars.com/api/?name=Salem&background=10b981&color=fff" id="patientProfileImage" alt="Profile" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--secondary); box-shadow: var(--shadow);">
-                            <label for="uploadProfilePatient" style="position: absolute; bottom: 0; right: 0; background: var(--primary); color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 3px solid var(--card-bg); transition: var(--transition);">
-                                <i class="fa-solid fa-camera"></i>
-                            </label>
-                            <input type="file" id="uploadProfilePatient" style="display: none;" accept="image/*" onchange="alert('تم اختيار الصورة! سيتم تغييرها قريباً.')">
-                        </div>
-                        <h3 style="margin-bottom: 5px;">سالم عبدالله</h3>
-                        <p style="color: var(--text-muted); font-size: 14px;">مريض - حساب نشط</p>
-                        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">patient@test.com</p>
-                    </div>
-
-                    <!-- Registration Data -->
-                    <div class="form-box" style="margin: 0;">
-                        <h4 style="margin-bottom: 20px; color: var(--text-main);"><i class="fa-solid fa-address-card"></i> البيانات الشخصية والطبية</h4>
-                        <div style="display: flex; gap: 15px;">
-                            <div class="input-group" style="flex: 1;">
-                                <label>العمر</label>
-                                <input type="text" value="35 سنة" readonly style="background: var(--bg-color); cursor: not-allowed;">
+                <form id="patientProfileForm" onsubmit="return handlePatientProfileUpdate(event)">
+                    <div class="grid-container">
+                        <!-- Profile Picture & Info -->
+                        <div class="form-box" style="margin: 0; text-align: center;">
+                            <div style="position: relative; display: inline-block; margin-bottom: 20px;">
+                                <img src="https://ui-avatars.com/api/?name=Salem&background=10b981&color=fff" id="patientProfileImage" alt="Profile" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--secondary); box-shadow: var(--shadow);">
+                                <label for="uploadProfilePatient" style="position: absolute; bottom: 0; right: 0; background: var(--primary); color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 3px solid var(--card-bg); transition: var(--transition);">
+                                    <i class="fa-solid fa-camera"></i>
+                                </label>
+                                <input type="file" name="profile_picture" id="uploadProfilePatient" style="display: none;" accept="image/*" onchange="alert('تم اختيار الصورة! سيتم تغييرها قريباً.')">
                             </div>
-                            <div class="input-group" style="flex: 1;">
-                                <label>النوع</label>
-                                <input type="text" value="ذكر" readonly style="background: var(--bg-color); cursor: not-allowed;">
+                            <h3 style="margin-bottom: 5px;">سالم عبدالله</h3>
+                            <p style="color: var(--text-muted); font-size: 14px;">مريض - حساب نشط</p>
+                            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">patient@test.com</p>
+                        </div>
+
+                        <!-- Registration Data -->
+                        <div class="form-box" style="margin: 0;">
+                            <h4 style="margin-bottom: 20px; color: var(--text-main);"><i class="fa-solid fa-address-card"></i> البيانات الشخصية والطبية</h4>
+                            <div style="display: flex; gap: 15px;">
+                                <div class="input-group" style="flex: 1;">
+                                    <label>العمر</label>
+                                    <input type="text" name="age" value="35 سنة" readonly style="background: var(--bg-color); cursor: not-allowed;">
+                                </div>
+                                <div class="input-group" style="flex: 1;">
+                                    <label>النوع</label>
+                                    <input type="text" name="gender" value="ذكر" readonly style="background: var(--bg-color); cursor: not-allowed;">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>رقم الهاتف</label>
+                                <input type="text" name="phone" value="01012345678" readonly style="background: var(--bg-color); cursor: not-allowed;">
+                            </div>
+                            <div class="input-group">
+                                <label>الأمراض المزمنة / التاريخ المرضي</label>
+                                <textarea name="chronic_diseases" rows="2" readonly style="background: var(--bg-color); cursor: not-allowed;">الربو التحسسي، لا توجد أمراض مزمنة أخرى.</textarea>
+                            </div>
+                            <div class="input-group" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+                                <label style="color: var(--primary); font-size: 14px;"><i class="fa-solid fa-user-doctor"></i> الطبيب المتابع للحالة</label>
+                                <input type="text" name="primary_doctor" value="د. أحمد سمير (باطنة)" readonly style="background: rgba(10,124,255,0.05); color: var(--primary); font-weight: bold; border-color: var(--primary); cursor: default;">
                             </div>
                         </div>
-                        <div class="input-group">
-                            <label>رقم الهاتف</label>
-                            <input type="text" value="01012345678" readonly style="background: var(--bg-color); cursor: not-allowed;">
-                        </div>
-                        <div class="input-group">
-                            <label>الأمراض المزمنة / التاريخ المرضي</label>
-                            <textarea rows="2" readonly style="background: var(--bg-color); cursor: not-allowed;">الربو التحسسي، لا توجد أمراض مزمنة أخرى.</textarea>
-                        </div>
-                        <div class="input-group" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);">
-                            <label style="color: var(--primary); font-size: 14px;"><i class="fa-solid fa-user-doctor"></i> الطبيب المتابع للحالة</label>
-                            <input type="text" value="د. أحمد سمير (باطنة)" readonly style="background: rgba(10,124,255,0.05); color: var(--primary); font-weight: bold; border-color: var(--primary); cursor: default;">
-                        </div>
-                    </div>
 
-                    <!-- Change Password -->
-                    <div class="form-box" style="margin: 0;">
-                        <h4 style="margin-bottom: 20px; color: var(--text-main);"><i class="fa-solid fa-lock"></i> تغيير كلمة المرور والبيانات</h4>
-                        <div class="input-group">
-                            <label>كلمة المرور الحالية</label>
-                            <input type="password" placeholder="أدخل كلمة المرور الحالية...">
+                        <!-- Change Password -->
+                        <div class="form-box" style="margin: 0;">
+                            <h4 style="margin-bottom: 20px; color: var(--text-main);"><i class="fa-solid fa-lock"></i> تغيير كلمة المرور والبيانات</h4>
+                            <div class="input-group">
+                                <label>كلمة المرور الحالية</label>
+                                <input type="password" name="current_password" placeholder="أدخل كلمة المرور الحالية...">
+                            </div>
+                            <div class="input-group">
+                                <label>كلمة المرور الجديدة</label>
+                                <input type="password" name="new_password" placeholder="أدخل كلمة المرور الجديدة...">
+                            </div>
+                            <div class="input-group">
+                                <label>تأكيد كلمة المرور الجديدة</label>
+                                <input type="password" name="confirm_password" placeholder="أعد إدخال كلمة المرور الجديدة...">
+                            </div>
                         </div>
-                        <div class="input-group">
-                            <label>كلمة المرور الجديدة</label>
-                            <input type="password" placeholder="أدخل كلمة المرور الجديدة...">
-                        </div>
-                        <div class="input-group">
-                            <label>تأكيد كلمة المرور الجديدة</label>
-                            <input type="password" placeholder="أعد إدخال كلمة المرور الجديدة...">
-                        </div>
-                        <button class="btn" style="width: 100%; margin-top: 10px;" onclick="alert('تم حفظ التعديلات بنجاح!')">حفظ التعديلات <i class="fa-solid fa-floppy-disk"></i></button>
                     </div>
-                </div>
+                    <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">حفظ التعديلات <i class="fa-solid fa-floppy-disk"></i></button>
+                </form>
             </section>
         </main>
     </div>
@@ -370,7 +372,7 @@
         </div>
     </div>
 
-    <script src="../script.js"></script>
+    <script src="script.js"></script>
     <script>
         function showSec(id, el) {
             document.querySelectorAll('.sidebar ul li a').forEach(a => a.classList.remove('active'));
@@ -379,55 +381,56 @@
             document.getElementById(id).style.display = 'block';
         }
 
-        // Load data from localStorage to link doctor actions with patient dashboard
+        function handlePatientApptSubmit(e) {
+            e.preventDefault();
+            alert('تم إرسال الطلب للطبيب، وبانتظار تحديد الموعد (تاريخ/وقت).');
+        }
+
+        function handlePatientLabUpload(e, type) {
+            e.preventDefault();
+            alert('تم إضافة ' + (type === 'lab' ? 'التحليل' : 'الأشعة') + ' بنجاح.');
+        }
+
+        function handleSupportSubmit(e) {
+            e.preventDefault();
+            alert('تم إرسال الشكوى للإدارة بنجاح! سيتم مراجعتها والرد عليك في أسرع وقت.');
+        }
+
+        function handlePatientProfileUpdate(e) {
+            e.preventDefault();
+            alert('تم حفظ التعديلات بنجاح!');
+        }
+
+        // Load data from Firebase
         window.addEventListener('DOMContentLoaded', () => {
-            // -- Seed Dummy Data if empty (per user request) --
-            let savedDiagnosis = localStorage.getItem('patientDiagnosis');
-            if(!savedDiagnosis) {
-                const dummyDiag = { text: 'التهاب حاد في الشعب الهوائية، يحتاج لراحة تامة.', doctor: 'د. أحمد سمير', date: new Date().toLocaleDateString('ar-EG') };
-                localStorage.setItem('patientDiagnosis', JSON.stringify(dummyDiag));
-                savedDiagnosis = JSON.stringify(dummyDiag);
-                setTimeout(() => { if(window.showToast) showToast('تنبيه: تم تحديث ملفك الطبي بتشخيص جديد من طبيبك.'); }, 1500);
-            }
-
-            let savedAppt = localStorage.getItem('patientAppointment');
-            if(!savedAppt) {
-                // Generate a dummy future date
-                const futureDate = new Date();
-                futureDate.setDate(futureDate.getDate() + 2);
-                const dummyDateStr = futureDate.toLocaleDateString('ar-EG', { month: 'long', day: 'numeric' }) + ' - 10:30 ص';
+            if (window.dbListenRecords) {
+                window.dbListenRecords('medtrack_diagnoses', (diagnoses) => {
+                    if (diagnoses && diagnoses.length > 0) {
+                        const data = diagnoses[0];
+                        document.getElementById('patientLastDiagnosis').innerText = data.text;
+                        document.getElementById('patientLastDiagnosisMeta').innerText = 'الطبيب: ' + data.doctor + ' - ' + data.date;
+                    }
+                });
                 
-                const dummyAppt = { patient: 'سالم عبدالله', doctor: 'د. أحمد سمير', datetime: dummyDateStr, status: 'مؤكد' };
-                localStorage.setItem('patientAppointment', JSON.stringify(dummyAppt));
-                savedAppt = JSON.stringify(dummyAppt);
-                setTimeout(() => { if(window.showToast) showToast('تنبيه: لديك موعد قادم تم تأكيده مع د. أحمد سمير.'); }, 3000);
-            }
+                window.dbListenRecords('medtrack_appointments', (appts) => {
+                    if (appts && appts.length > 0) {
+                        const apptData = appts[0];
+                        document.getElementById('patientNextAppt').innerText = apptData.datetime;
+                        document.getElementById('patientNextApptMeta').innerText = 'الطبيب: ' + apptData.doctor;
 
-            if(savedDiagnosis) {
-                const data = JSON.parse(savedDiagnosis);
-                document.getElementById('patientLastDiagnosis').innerText = data.text;
-                document.getElementById('patientLastDiagnosisMeta').innerText = 'الطبيب: ' + data.doctor + ' - ' + data.date;
-            }
-
-            if(savedAppt) {
-                const apptData = JSON.parse(savedAppt);
-                
-                // Update Next Appointment Card
-                document.getElementById('patientNextAppt').innerText = apptData.datetime;
-                document.getElementById('patientNextApptMeta').innerText = 'الطبيب: ' + apptData.doctor;
-
-                // Prepend to Appointments Table
-                const tbody = document.getElementById('patientApptsTable');
-                if(tbody) {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${apptData.doctor}</td>
-                        <td>مراجعة عامة (موعد مجدول)</td>
-                        <td>${apptData.datetime}</td>
-                        <td><span class="status active">${apptData.status}</span></td>
-                    `;
-                    tbody.insertBefore(tr, tbody.firstChild);
-                }
+                        const tbody = document.getElementById('patientApptsTable');
+                        if(tbody) {
+                            tbody.innerHTML = `
+                                <tr>
+                                    <td>${apptData.doctor}</td>
+                                    <td>مراجعة عامة (موعد مجدول)</td>
+                                    <td>${apptData.datetime}</td>
+                                    <td><span class="status active">${apptData.status}</span></td>
+                                </tr>
+                            `;
+                        }
+                    }
+                });
             }
         });
     </script>
@@ -437,5 +440,6 @@
         <i class="fa-solid fa-truck-medical"></i>
         <span class="emergency-text">طوارئ / إسعاف</span>
     </a>
+    <script type="module" src="firebase-config.js"></script>
 </body>
 </html>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تسجيل دخول - Med Track</title>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <style>
     </style>
@@ -13,11 +13,11 @@
 
     <nav>
         <div class="logo">
-            <img src="../logo.svg.png" alt="Med Track Logo" style="width: 80px; height: auto; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">
+            <img src="logo.svg.png" alt="Med Track Logo" style="width: 80px; height: auto; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">
             Med Track
         </div>
         <ul>
-            <li><a href="../index.html">الرئيسية</a></li>
+            <li><a href="index.html">الرئيسية</a></li>
         </ul>
         
     </nav>
@@ -27,44 +27,44 @@
             <h2 class="title" style="margin-bottom: 20px; color: var(--primary);">أهلاً بك.. نتمنى لك دوام العافية 💙</h2>
             <p style="text-align: center; margin-bottom: 30px; font-weight: bold;">تسجيل دخول</p>
 
-            <div id="loginSection">
+            <form id="loginForm" onsubmit="return handleLoginSubmit(event, currentRole)">
                 <div id="dummyDataBox" style="background: rgba(10,124,255,0.1); padding: 10px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-size: 14px; border: 1px dashed var(--primary); color: var(--primary);">
                     <b>بيانات تجريبية للمريض:</b><br>اليوزر: patient@test.com | الرمز: 1234
                 </div>
 
                 <div class="input-group">
                     <label>البريد الإلكتروني أو رقم الهاتف</label>
-                    <input type="text" id="loginUsername" placeholder="أدخل البيانات هنا...">
+                    <input type="text" id="loginUsername" name="email" placeholder="أدخل البيانات هنا..." required>
                 </div>
                 
                 <div class="input-group">
                     <label>كلمة المرور</label>
-                    <input type="password" id="loginPassword" placeholder="أدخل كلمة المرور...">
+                    <input type="password" id="loginPassword" name="password" placeholder="أدخل كلمة المرور..." required>
                 </div>
                 
                 <div style="text-align: right; margin-top: -10px; margin-bottom: 20px;">
                     <a href="#" onclick="showOTPModal()" style="font-size: 14px; color: var(--primary); font-weight: bold; text-decoration: underline;">هل نسيت كلمة المرور؟ (تغيير عبر OTP)</a>
                 </div>
                 
-                <button class="btn" style="width: 100%; margin-top: 10px;" onclick="doLogin()">دخول <i class="fa-solid fa-right-to-bracket"></i></button>
-            </div>
+                <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">دخول <i class="fa-solid fa-right-to-bracket"></i></button>
+            </form>
 
-            <div id="registerSection" style="display: none;">
+            <form id="registerForm" onsubmit="return handleRegisterSubmit(event, currentRole)" style="display: none;">
                 <div class="input-group">
                     <label>الاسم الرباعي</label>
-                    <input type="text" placeholder="أدخل اسمك الكامل...">
+                    <input type="text" name="full_name" placeholder="أدخل اسمك الكامل..." required>
                 </div>
                 <div class="input-group">
                     <label>البريد الإلكتروني</label>
-                    <input type="email" placeholder="أدخل بريدك الإلكتروني...">
+                    <input type="email" name="email" placeholder="أدخل بريدك الإلكتروني..." required>
                 </div>
                 <div class="input-group">
                     <label>كلمة المرور</label>
-                    <input type="password" placeholder="أدخل كلمة المرور...">
+                    <input type="password" name="password" placeholder="أدخل كلمة المرور..." required>
                 </div>
                 <div class="input-group">
                     <label>رقم الهاتف</label>
-                    <input type="tel" placeholder="أدخل رقم الهاتف...">
+                    <input type="tel" name="phone" placeholder="أدخل رقم الهاتف..." required>
                 </div>
 
                 <!-- Patient Specific Fields -->
@@ -72,16 +72,16 @@
                     <div style="display: flex; gap: 10px;">
                         <div class="input-group" style="flex: 1;">
                             <label>العمر</label>
-                            <input type="number" placeholder="أدخل عمرك...">
+                            <input type="number" name="age" placeholder="أدخل عمرك...">
                         </div>
                         <div class="input-group" style="flex: 1;">
                             <label>تاريخ الميلاد</label>
-                            <input type="date">
+                            <input type="date" name="dob">
                         </div>
                     </div>
                     <div class="input-group">
                         <label>الجنس</label>
-                        <select>
+                        <select name="gender">
                             <option value="">اختر الجنس...</option>
                             <option value="male">ذكر</option>
                             <option value="female">أنثى</option>
@@ -90,27 +90,27 @@
                     <div class="input-group">
                         <label>الأمراض التي تعاني منها (تاريخ مرضي)</label>
                         <div class="diseases-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: var(--bg-color); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); max-height: 180px; overflow-y: auto;">
-                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;"><input type="checkbox"> السكري</label>
-                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;"><input type="checkbox"> ضغط الدم المرتفع</label>
-                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;"><input type="checkbox"> أمراض القلب</label>
-                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;"><input type="checkbox"> الربو / حساسية الصدر</label>
-                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;"><input type="checkbox"> الكولسترول</label>
-                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;"><input type="checkbox"> الغدة الدرقية</label>
-                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;"><input type="checkbox"> أمراض الكلى</label>
-                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;"><input type="checkbox"> أمراض الكبد</label>
-                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;"><input type="checkbox"> التهاب المفاصل</label>
-                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;"><input type="checkbox"> فقر الدم (الأنيميا)</label>
-                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;"><input type="checkbox"> قرحة المعدة</label>
-                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;"><input type="checkbox"> لا توجد أمراض (سليم)</label>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;"><input type="checkbox" name="diseases[]" value="السكري"> السكري</label>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;"><input type="checkbox" name="diseases[]" value="ضغط الدم المرتفع"> ضغط الدم المرتفع</label>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;"><input type="checkbox" name="diseases[]" value="أمراض القلب"> أمراض القلب</label>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;"><input type="checkbox" name="diseases[]" value="الربو"> الربو / حساسية الصدر</label>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;"><input type="checkbox" name="diseases[]" value="الكولسترول"> الكولسترول</label>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;"><input type="checkbox" name="diseases[]" value="الغدة الدرقية"> الغدة الدرقية</label>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;"><input type="checkbox" name="diseases[]" value="أمراض الكلى"> أمراض الكلى</label>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;"><input type="checkbox" name="diseases[]" value="أمراض الكبد"> أمراض الكبد</label>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;"><input type="checkbox" name="diseases[]" value="التهاب المفاصل"> التهاب المفاصل</label>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;"><input type="checkbox" name="diseases[]" value="فقر الدم"> فقر الدم (الأنيميا)</label>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;"><input type="checkbox" name="diseases[]" value="قرحة المعدة"> قرحة المعدة</label>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;"><input type="checkbox" name="diseases[]" value="سليم"> لا توجد أمراض (سليم)</label>
                         </div>
-                        <input type="text" placeholder="أمراض أخرى (اكتبها هنا...)" style="margin-top: 10px;">
+                        <input type="text" name="other_diseases" placeholder="أمراض أخرى (اكتبها هنا...)" style="margin-top: 10px;">
                     </div>
                 </div>
 
 
 
-                <button class="btn" style="width: 100%; margin-top: 10px;" onclick="doRegister()">إنشاء الحساب <i class="fa-solid fa-user-plus"></i></button>
-            </div>
+                <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">إنشاء الحساب <i class="fa-solid fa-user-plus"></i></button>
+            </form>
 
             <div id="toggleAuthModeDiv" style="text-align: center; margin-top: 20px;">
                 <a href="#" id="toggleAuthModeBtn" onclick="toggleAuthMode()" style="font-size: 15px; color: var(--primary); font-weight: bold; text-decoration: underline;">ليس لديك حساب؟ إنشاء حساب جديد</a>
@@ -123,35 +123,37 @@
         <div class="form-box" style="width: 90%; max-width: 400px; position: relative;">
             <button onclick="closeOTPModal()" style="position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted);"><i class="fa-solid fa-xmark"></i></button>
             
-            <div id="otpStep1">
-                <h3 style="margin-bottom: 15px;"><i class="fa-solid fa-envelope" style="color:var(--primary);"></i> استعادة كلمة المرور</h3>
-                <p style="margin-bottom: 20px; font-size: 14px;">أدخل بريدك الإلكتروني لإرسال رمز التحقق (OTP).</p>
+            <form id="otpStep1" onsubmit="return handleOTPSend(event)">
+                <h3 style="margin-bottom: 15px;"><i class="fa-solid fa-envelope" style="color:var(--primary);"></i> إرسال رمز التحقق (OTP)</h3>
+                <p style="margin-bottom: 20px; font-size: 14px;">أدخل رقم هاتفك لإرسال رسالة نصية (SMS) تحتوي على كود التحقق.</p>
                 <div class="input-group">
-                    <input type="email" id="resetEmail" placeholder="البريد الإلكتروني...">
+                    <input type="tel" id="resetPhone" name="phone" placeholder="رقم الهاتف (مثال: +201012345678)..." required>
                 </div>
-                <button class="btn" style="width: 100%;" onclick="sendOTP()">إرسال الرمز <i class="fa-solid fa-paper-plane"></i></button>
-            </div>
+                <div id="recaptcha-container" style="margin-bottom: 15px;"></div>
+                <button type="submit" id="sendOtpBtn" class="btn" style="width: 100%;">إرسال الرمز <i class="fa-solid fa-paper-plane"></i></button>
+            </form>
 
-            <div id="otpStep2" style="display: none;">
+            <form id="otpStep2" onsubmit="return handleOTPVerify(event)" style="display: none;">
                 <h3 style="margin-bottom: 15px;"><i class="fa-solid fa-shield-halved" style="color:var(--warning);"></i> إدخال رمز التحقق</h3>
-                <p style="margin-bottom: 20px; font-size: 14px; color: var(--success);">تم إرسال الرمز إلى بريدك الإلكتروني بنجاح.</p>
+                <p style="margin-bottom: 20px; font-size: 14px; color: var(--success);">تم إرسال الرمز إلى هاتفك بنجاح.</p>
                 <div class="input-group">
-                    <input type="text" id="otpCode" placeholder="أدخل الرمز المكون من 4 أرقام">
+                    <input type="text" id="otpCode" name="otp_code" placeholder="أدخل الرمز المكون من 6 أرقام" required>
                 </div>
-                <button class="btn" style="width: 100%;" onclick="verifyOTP()">التحقق من الرمز <i class="fa-solid fa-check-double"></i></button>
-            </div>
+                <button type="submit" id="verifyOtpBtn" class="btn" style="width: 100%;">التحقق من الرمز <i class="fa-solid fa-check-double"></i></button>
+            </form>
 
-            <div id="otpStep3" style="display: none;">
+            <form id="otpStep3" onsubmit="return handleOTPReset(event)" style="display: none;">
                 <h3 style="margin-bottom: 15px;"><i class="fa-solid fa-lock" style="color:var(--success);"></i> كلمة المرور الجديدة</h3>
                 <div class="input-group">
-                    <input type="password" id="newPassword" placeholder="أدخل كلمة المرور الجديدة...">
+                    <input type="password" id="newPassword" name="new_password" placeholder="أدخل كلمة المرور الجديدة..." required>
                 </div>
-                <button class="btn" style="width: 100%;" onclick="resetPassword()">حفظ وتسجيل الدخول <i class="fa-solid fa-floppy-disk"></i></button>
-            </div>
+                <button type="submit" class="btn" style="width: 100%;">حفظ وتسجيل الدخول <i class="fa-solid fa-floppy-disk"></i></button>
+            </form>
         </div>
     </div>
 
-    <script src="../script.js"></script>
+    <script type="module" src="firebase-config.js"></script>
+    <script src="script.js"></script>
     <script>
         let currentRole = 'patient';
         let isRegisterMode = false;
@@ -224,8 +226,9 @@
             }
         }
 
-        function doRegister() {
-            if(currentRole === 'doctor') {
+        function handleRegisterSubmit(e, role) {
+            e.preventDefault();
+            if(role === 'doctor') {
                 alert("تم تسجيل طلب الطبيب بنجاح. سيتم مراجعة الطلب من قبل الإدارة والموافقة عليه قريباً.");
                 toggleAuthMode();
             } else {
@@ -238,10 +241,11 @@
             document.getElementById('loginUsername').value = 'patient@test.com';
             document.getElementById('loginPassword').value = '1234';
         }
-        function doLogin() {
-            if(currentRole === 'admin') window.location.href = 'admin.html';
-            else if(currentRole === 'doctor') window.location.href = 'doctor.html';
-            else if(currentRole === 'lab') window.location.href = 'lab.html';
+        function handleLoginSubmit(e, role) {
+            e.preventDefault();
+            if(role === 'admin') window.location.href = 'admin.html';
+            else if(role === 'doctor') window.location.href = 'doctor.html';
+            else if(role === 'lab') window.location.href = 'lab.html';
             else window.location.href = 'patients.html';
         }
 
@@ -254,24 +258,66 @@
         function closeOTPModal() {
             document.getElementById('otpModal').style.display = 'none';
         }
-        function sendOTP() {
-            const email = document.getElementById('resetEmail').value;
-            if(!email) { alert("يرجى إدخال البريد الإلكتروني"); return; }
-            document.getElementById('otpStep1').style.display = 'none';
-            document.getElementById('otpStep2').style.display = 'block';
+        function handleOTPSend(e) {
+            e.preventDefault();
+            const phone = document.getElementById('resetPhone').value;
+            if(!phone) return;
+            
+            const btn = document.getElementById('sendOtpBtn');
+            btn.disabled = true;
+            btn.innerText = 'جاري الإرسال...';
+
+            if(window.sendOTP) {
+                window.sendOTP(phone).then(() => {
+                    document.getElementById('otpStep1').style.display = 'none';
+                    document.getElementById('otpStep2').style.display = 'block';
+                    btn.disabled = false;
+                    btn.innerHTML = 'إرسال الرمز <i class="fa-solid fa-paper-plane"></i>';
+                }).catch(err => {
+                    alert('خطأ أثناء إرسال الرمز: ' + err);
+                    btn.disabled = false;
+                    btn.innerHTML = 'إرسال الرمز <i class="fa-solid fa-paper-plane"></i>';
+                });
+            } else {
+                alert('Firebase module not loaded yet.');
+                btn.disabled = false;
+                btn.innerHTML = 'إرسال الرمز <i class="fa-solid fa-paper-plane"></i>';
+            }
         }
-        function verifyOTP() {
+        function handleOTPVerify(e) {
+            e.preventDefault();
             const code = document.getElementById('otpCode').value;
-            if(!code) { alert("يرجى إدخال الرمز"); return; }
-            document.getElementById('otpStep2').style.display = 'none';
-            document.getElementById('otpStep3').style.display = 'block';
+            if(!code) return;
+
+            const btn = document.getElementById('verifyOtpBtn');
+            btn.disabled = true;
+            btn.innerText = 'جاري التحقق...';
+
+            if(window.verifyOTP) {
+                window.verifyOTP(code).then((result) => {
+                    document.getElementById('otpStep2').style.display = 'none';
+                    document.getElementById('otpStep3').style.display = 'block';
+                    btn.disabled = false;
+                    btn.innerHTML = 'التحقق من الرمز <i class="fa-solid fa-check-double"></i>';
+                }).catch(err => {
+                    alert('الكود غير صحيح أو منتهي الصلاحية.');
+                    btn.disabled = false;
+                    btn.innerHTML = 'التحقق من الرمز <i class="fa-solid fa-check-double"></i>';
+                });
+            } else {
+                alert('Firebase module not loaded yet.');
+            }
         }
-        function resetPassword() {
+        function handleOTPReset(e) {
+            e.preventDefault();
             const pw = document.getElementById('newPassword').value;
-            if(!pw) { alert("يرجى إدخال كلمة المرور"); return; }
+            if(!pw) return;
             alert("تم تغيير كلمة المرور بنجاح! جاري تسجيل الدخول...");
             closeOTPModal();
-            doLogin();
+            if(currentRole === 'admin') window.location.href = 'admin.html';
+            else if(currentRole === 'doctor') window.location.href = 'doctor.html';
+            else if(currentRole === 'lab') window.location.href = 'lab.html';
+            else window.location.href = 'patients.html';
         }
     </script>
 </body>

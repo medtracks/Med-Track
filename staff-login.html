@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بوابة الموظفين والأطباء - Med Track</title>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <style>
         .login-tabs { display: flex; gap: 10px; margin-bottom: 30px; }
@@ -16,11 +16,11 @@
 
     <nav>
         <div class="logo">
-            <img src="../logo.svg.png" alt="Med Track Logo" style="width: 80px; height: auto; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">
+            <img src="logo.svg.png" alt="Med Track Logo" style="width: 80px; height: auto; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">
             Med Track
         </div>
         <ul>
-            <li><a href="../index.html">الرئيسية</a></li>
+            <li><a href="index.html">الرئيسية</a></li>
         </ul>
     </nav>
 
@@ -35,59 +35,63 @@
                 <div class="login-tab" onclick="selectRole('doctor', this)">الأطباء</div>
             </div>
 
-            <div id="loginSection">
+            <form id="loginForm" onsubmit="return handleLoginSubmit(event, currentRole)">
                 <div id="dummyDataBox" style="background: rgba(10,124,255,0.1); padding: 10px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-size: 14px; border: 1px dashed var(--primary); color: var(--primary);">
                     <b>بيانات تجريبية للمستشفى:</b><br>اليوزر: admin@test.com | الرمز: admin123
                 </div>
 
                 <div class="input-group">
                     <label>البريد الإلكتروني</label>
-                    <input type="text" id="loginUsername" placeholder="أدخل البيانات هنا...">
+                    <input type="email" id="loginUsername" name="email" placeholder="أدخل البيانات هنا..." required>
                 </div>
                 
                 <div class="input-group">
                     <label>كلمة المرور</label>
-                    <input type="password" id="loginPassword" placeholder="أدخل كلمة المرور...">
+                    <input type="password" id="loginPassword" name="password" placeholder="أدخل كلمة المرور..." required>
                 </div>
                 
-                <button class="btn" style="width: 100%; margin-top: 10px;" onclick="doLogin()">دخول <i class="fa-solid fa-right-to-bracket"></i></button>
-            </div>
+                <div style="text-align: right; margin-top: -10px; margin-bottom: 20px;">
+                    <a href="#" onclick="showOTPModal()" style="font-size: 14px; color: var(--primary); font-weight: bold; text-decoration: underline;">هل نسيت كلمة المرور؟ (تغيير عبر OTP)</a>
+                </div>
+                
+                <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">دخول <i class="fa-solid fa-right-to-bracket"></i></button>
+            </form>
 
-            <div id="registerSection" style="display: none;">
+            <form id="registerForm" onsubmit="return handleRegisterSubmit(event, currentRole)" style="display: none;">
                 <div class="input-group">
                     <label>الاسم الرباعي</label>
-                    <input type="text" placeholder="أدخل اسمك الكامل...">
+                    <input type="text" name="full_name" placeholder="أدخل اسمك الكامل..." required>
                 </div>
                 <div class="input-group">
                     <label>البريد الإلكتروني</label>
-                    <input type="email" placeholder="أدخل بريدك الإلكتروني...">
+                    <input type="email" name="email" placeholder="أدخل بريدك الإلكتروني..." required>
                 </div>
                 <div class="input-group">
                     <label>كلمة المرور</label>
-                    <input type="password" placeholder="أدخل كلمة المرور...">
+                    <input type="password" name="password" placeholder="أدخل كلمة المرور..." required>
                 </div>
                 <div class="input-group">
                     <label>رقم الهاتف</label>
-                    <input type="tel" placeholder="أدخل رقم الهاتف...">
+                    <input type="tel" name="phone" placeholder="أدخل رقم الهاتف..." required>
                 </div>
 
                 <!-- Doctor Specific Fields -->
                 <div id="doctorRegFields">
                     <div class="input-group">
                         <label>التخصص الطبي</label>
-                        <input type="text" placeholder="أدخل تخصصك الطبي...">
+                        <input type="text" name="specialty" placeholder="أدخل تخصصك الطبي..." required>
                     </div>
                     <div class="input-group">
                         <label>الشهادات والخبرات</label>
-                        <textarea placeholder="اكتب نبذة عن خبراتك الطبية والمؤهلات..." rows="2"></textarea>
+                        <textarea name="experience" placeholder="اكتب نبذة عن خبراتك الطبية والمؤهلات..." rows="2" required></textarea>
                     </div>
                     <div style="background: rgba(245, 158, 11, 0.1); color: var(--warning); padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; border: 1px solid var(--warning);">
                         <i class="fa-solid fa-triangle-exclamation"></i> <b>تنبيه:</b> سيتم مراجعة بياناتك من قبل إدارة الموقع. لن يتم تفعيل حسابك إلا بعد الموافقة.
                     </div>
                 </div>
 
-                <button class="btn" style="width: 100%; margin-top: 10px;" onclick="doRegister()">تقديم طلب الانضمام <i class="fa-solid fa-user-plus"></i></button>
-            </div>
+                <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">تقديم طلب الانضمام <i class="fa-solid fa-user-plus"></i></button>
+            </form>
 
             <div id="toggleAuthModeDiv" style="text-align: center; margin-top: 20px; display: none;">
                 <a href="#" id="toggleAuthModeBtn" onclick="toggleAuthMode()" style="font-size: 15px; color: var(--primary); font-weight: bold; text-decoration: underline;">طبيب جديد؟ إنشاء طلب انضمام</a>
@@ -96,7 +100,42 @@
         </div>
     </section>
 
-    <script src="../script.js"></script>
+    <!-- OTP Modal -->
+    <div id="otpModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center;">
+        <div class="form-box" style="width: 90%; max-width: 400px; position: relative;">
+            <button onclick="closeOTPModal()" style="position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted);"><i class="fa-solid fa-xmark"></i></button>
+            
+            <form id="otpStep1" onsubmit="return handleOTPSend(event)">
+                <h3 style="margin-bottom: 15px;"><i class="fa-solid fa-envelope" style="color:var(--primary);"></i> إرسال رمز التحقق (OTP)</h3>
+                <p style="margin-bottom: 20px; font-size: 14px;">أدخل رقم هاتفك لإرسال رسالة نصية (SMS) تحتوي على كود التحقق.</p>
+                <div class="input-group">
+                    <input type="tel" id="resetPhone" name="phone" placeholder="رقم الهاتف (مثال: +201012345678)..." required>
+                </div>
+                <div id="recaptcha-container" style="margin-bottom: 15px;"></div>
+                <button type="submit" id="sendOtpBtn" class="btn" style="width: 100%;">إرسال الرمز <i class="fa-solid fa-paper-plane"></i></button>
+            </form>
+
+            <form id="otpStep2" onsubmit="return handleOTPVerify(event)" style="display: none;">
+                <h3 style="margin-bottom: 15px;"><i class="fa-solid fa-shield-halved" style="color:var(--warning);"></i> إدخال رمز التحقق</h3>
+                <p style="margin-bottom: 20px; font-size: 14px; color: var(--success);">تم إرسال الرمز إلى هاتفك بنجاح.</p>
+                <div class="input-group">
+                    <input type="text" id="otpCode" name="otp_code" placeholder="أدخل الرمز المكون من 6 أرقام" required>
+                </div>
+                <button type="submit" id="verifyOtpBtn" class="btn" style="width: 100%;">التحقق من الرمز <i class="fa-solid fa-check-double"></i></button>
+            </form>
+
+            <form id="otpStep3" onsubmit="return handleOTPReset(event)" style="display: none;">
+                <h3 style="margin-bottom: 15px;"><i class="fa-solid fa-lock" style="color:var(--success);"></i> كلمة المرور الجديدة</h3>
+                <div class="input-group">
+                    <input type="password" id="newPassword" name="new_password" placeholder="أدخل كلمة المرور الجديدة..." required>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">حفظ وتسجيل الدخول <i class="fa-solid fa-floppy-disk"></i></button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="firebase-config.js"></script>
+    <script src="script.js"></script>
     <script>
         let currentRole = 'admin';
         let isRegisterMode = false;
@@ -177,17 +216,90 @@
             document.getElementById('loginPassword').value = 'admin123';
         }
 
-        function doRegister() {
-            if(currentRole === 'doctor') {
+        function handleRegisterSubmit(e, role) {
+            e.preventDefault();
+            if(role === 'doctor') {
                 alert("تم إرسال طلب الانضمام بنجاح. سيتم مراجعة الطلب من قبل الإدارة والموافقة عليه قريباً.");
                 toggleAuthMode();
             }
         }
 
-        function doLogin() {
+        function handleLoginSubmit(e, role) {
+            e.preventDefault();
+            if(role === 'admin') window.location.href = 'admin.html';
+            else if(role === 'lab') window.location.href = 'lab.html';
+            else if(role === 'doctor') window.location.href = 'doctor.html';
+        }
+
+        // OTP Functions
+        function showOTPModal() {
+            document.getElementById('otpModal').style.display = 'flex';
+            document.getElementById('otpStep1').style.display = 'block';
+            document.getElementById('otpStep2').style.display = 'none';
+            document.getElementById('otpStep3').style.display = 'none';
+        }
+        function closeOTPModal() {
+            document.getElementById('otpModal').style.display = 'none';
+        }
+        function handleOTPSend(e) {
+            e.preventDefault();
+            const phone = document.getElementById('resetPhone').value;
+            if(!phone) return;
+            
+            const btn = document.getElementById('sendOtpBtn');
+            btn.disabled = true;
+            btn.innerText = 'جاري الإرسال...';
+
+            if(window.sendOTP) {
+                window.sendOTP(phone).then(() => {
+                    document.getElementById('otpStep1').style.display = 'none';
+                    document.getElementById('otpStep2').style.display = 'block';
+                    btn.disabled = false;
+                    btn.innerHTML = 'إرسال الرمز <i class="fa-solid fa-paper-plane"></i>';
+                }).catch(err => {
+                    alert('خطأ أثناء إرسال الرمز: ' + err);
+                    btn.disabled = false;
+                    btn.innerHTML = 'إرسال الرمز <i class="fa-solid fa-paper-plane"></i>';
+                });
+            } else {
+                alert('Firebase module not loaded yet.');
+                btn.disabled = false;
+                btn.innerHTML = 'إرسال الرمز <i class="fa-solid fa-paper-plane"></i>';
+            }
+        }
+        function handleOTPVerify(e) {
+            e.preventDefault();
+            const code = document.getElementById('otpCode').value;
+            if(!code) return;
+
+            const btn = document.getElementById('verifyOtpBtn');
+            btn.disabled = true;
+            btn.innerText = 'جاري التحقق...';
+
+            if(window.verifyOTP) {
+                window.verifyOTP(code).then((result) => {
+                    document.getElementById('otpStep2').style.display = 'none';
+                    document.getElementById('otpStep3').style.display = 'block';
+                    btn.disabled = false;
+                    btn.innerHTML = 'التحقق من الرمز <i class="fa-solid fa-check-double"></i>';
+                }).catch(err => {
+                    alert('الكود غير صحيح أو منتهي الصلاحية.');
+                    btn.disabled = false;
+                    btn.innerHTML = 'التحقق من الرمز <i class="fa-solid fa-check-double"></i>';
+                });
+            } else {
+                alert('Firebase module not loaded yet.');
+            }
+        }
+        function handleOTPReset(e) {
+            e.preventDefault();
+            const pw = document.getElementById('newPassword').value;
+            if(!pw) return;
+            alert("تم تغيير كلمة المرور بنجاح! جاري تسجيل الدخول...");
+            closeOTPModal();
             if(currentRole === 'admin') window.location.href = 'admin.html';
-            else if(currentRole === 'lab') window.location.href = 'lab.html';
             else if(currentRole === 'doctor') window.location.href = 'doctor.html';
+            else if(currentRole === 'lab') window.location.href = 'lab.html';
         }
     </script>
 </body>

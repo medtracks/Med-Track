@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة تحكم المستشفى - Med Track</title>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 </head>
 <body>
@@ -13,7 +13,7 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="logo">
-                <img src="../logo.svg.png" alt="Med Track Logo" style="width: 70px; height: auto; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">
+                <img src="logo.svg.png" alt="Med Track Logo" style="width: 70px; height: auto; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">
                 Med Track
             </div>
             <ul>
@@ -24,7 +24,7 @@
                 <li><a href="#" id="supportMenuLink" onclick="showSec('sec-complaints', this)"><i class="fa-solid fa-headset"></i> الدعم والشكاوى <span style="background:var(--danger);color:white;padding:2px 6px;border-radius:10px;font-size:10px;margin-right:5px;">1</span></a></li>
             </ul>
             <ul style="flex: 0;">
-                <li><a href="../index.html" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</a></li>
+                <li><a href="index.html" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</a></li>
             </ul>
         </aside>
 
@@ -74,14 +74,14 @@
                 </div>
             </div>
 
-            <div class="form-box" style="margin-bottom: 40px; width: 100%; max-width: 100%;">
+            <form class="form-box" style="margin-bottom: 40px; width: 100%; max-width: 100%;" onsubmit="return handleAdminQrSave(event)">
                 <h3 style="margin-bottom: 15px;"><i class="fa-solid fa-qrcode"></i> إدارة كود QR للأطباء</h3>
                 <p style="margin-bottom: 15px; color: var(--text-muted);">أدخل الرابط ليتحول تلقائياً إلى باركود QR يظهر في لوحة الأطباء ليستطيع المرضى مسحه.</p>
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <input type="url" id="adminQrUrlInput" placeholder="أدخل الرابط هنا (مثال: https://...)" style="flex: 1; min-width: 200px; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); font-family: inherit;">
-                    <button class="btn" style="background: var(--primary); padding: 12px 20px;" onclick="saveDoctorQrUrl()"><i class="fa-solid fa-floppy-disk"></i> حفظ ونشر الباركود</button>
+                    <input type="url" id="adminQrUrlInput" name="qr_url" placeholder="أدخل الرابط هنا (مثال: https://...)" style="flex: 1; min-width: 200px; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); font-family: inherit;" required>
+                    <button type="submit" class="btn" style="background: var(--primary); padding: 12px 20px;"><i class="fa-solid fa-floppy-disk"></i> حفظ ونشر الباركود</button>
                 </div>
-            </div>
+            </form>
 
             <h3 style="margin-bottom: 20px; display: flex; align-items: center; gap: 15px;">
                 طلبات تسجيل الأطباء
@@ -273,10 +273,10 @@
                                 <strong style="color:#fff;">أنت (الإدارة):</strong><br>نعتذر عن هذا الخلل. جاري فحص المشكلة الآن وحلها خلال دقائق. هل تفضل أن أقوم بحجز الموعد لك يدوياً؟
                             </div>
                         </div>
-                        <div style="padding: 15px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; background: var(--card-bg); border-radius: 0 0 12px 12px;">
-                            <input type="text" placeholder="اكتب ردك هنا..." style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-main);">
-                            <button class="btn" style="background: var(--warning);"><i class="fa-solid fa-paper-plane"></i> إرسال</button>
-                        </div>
+                        <form style="padding: 15px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; background: var(--card-bg); border-radius: 0 0 12px 12px;" onsubmit="return handleAdminChatSubmit(event)">
+                            <input type="text" name="chat_msg" placeholder="اكتب ردك هنا..." style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-main);" required>
+                            <button type="submit" class="btn" style="background: var(--warning);"><i class="fa-solid fa-paper-plane"></i> إرسال</button>
+                        </form>
                     </div>
 
                 </div>
@@ -284,13 +284,23 @@
         </main>
     </div>
 
-    <script src="../script.js"></script>
+    <script src="script.js"></script>
     <script>
         function showSec(id, el) {
             document.querySelectorAll('.sidebar ul li a').forEach(a => a.classList.remove('active'));
             el.classList.add('active');
             document.querySelectorAll('.content-section').forEach(sec => sec.style.display = 'none');
             document.getElementById(id).style.display = 'block';
+        }
+
+        function handleAdminQrSave(e) {
+            e.preventDefault();
+            saveDoctorQrUrl();
+        }
+
+        function handleAdminChatSubmit(e) {
+            e.preventDefault();
+            alert('تم إرسال الرد بنجاح.');
         }
 
         let pendingCount = 2;
@@ -352,5 +362,6 @@
         <i class="fa-solid fa-truck-medical"></i>
         <span class="emergency-text">طوارئ / إسعاف</span>
     </a>
+    <script type="module" src="firebase-config.js"></script>
 </body>
 </html>
