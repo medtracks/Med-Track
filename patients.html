@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة المريض - Med Track</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="../logo.svg.png" alt="Med Track Logo" style="width: 70px; height: auto; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">
+                Med Track
+            </div>
+            <ul>
+                <li><a href="#" class="active" onclick="showSec('sec-medical', this)"><i class="fa-solid fa-file-medical"></i> الملف الطبي</a></li>
+                <li><a href="#" onclick="showSec('sec-appointments', this)"><i class="fa-solid fa-calendar-check"></i> حجوزاتي</a></li>
+                <li><a href="#" onclick="showSec('sec-labs', this)"><i class="fa-solid fa-vial-virus"></i> التحاليل والأشعة</a></li>
+                <li><a href="#" onclick="showSec('sec-meds', this)"><i class="fa-solid fa-pills"></i> الأدوية والتنبيهات</a></li>
+                <li><a href="#" onclick="showSec('sec-chat', this)"><i class="fa-solid fa-comments"></i> الرسائل مع الطبيب</a></li>
+                <li><a href="#" onclick="showSec('sec-support', this)"><i class="fa-solid fa-headset"></i> الدعم والشكاوى</a></li>
+                <li><a href="#" id="patientProfileLink" onclick="showSec('sec-profile', this)"><i class="fa-solid fa-user-gear"></i> إعدادات الحساب</a></li>
+            </ul>
+            <div style="background: var(--bg-color); padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 20px; cursor: pointer;" onclick="document.getElementById('patientQrModal').style.display='flex'" title="تكبير الكود">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=MT-12345" alt="QR Code" style="width: 80px; margin-bottom: 10px; border-radius: 10px;">
+                <p style="font-size: 12px; font-weight: bold; color: var(--text-main);">Medical ID: MT-12345</p>
+            </div>
+            <ul style="flex: 0;">
+                <li><a href="../index.html" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="dash-header">
+                <h2>بوابة المريض</h2>
+                <div class="user-info">
+                    <button class="btn" style="background: var(--primary); padding: 8px 15px; font-size: 13px;" onclick="document.getElementById('patientQrModal').style.display='flex'"><i class="fa-solid fa-qrcode"></i> إظهار الكود (QR)</button>
+                    
+                    <div style="text-align: left;">
+                        <h4>سالم عبدالله</h4>
+                        <small style="color: var(--text-muted);">مريض - حساب نشط</small>
+                    </div>
+                    <img src="https://ui-avatars.com/api/?name=Salem&background=10b981&color=fff" alt="Patient" style="cursor: pointer; border: 2px solid var(--primary); transition: var(--transition);" onclick="document.getElementById('patientProfileLink').click()" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" title="الدخول لإعدادات الحساب">
+                </div>
+            </header>
+
+            <!-- MEDICAL RECORD SECTION -->
+            <section id="sec-medical" class="content-section">
+                <div class="grid-container" style="margin-bottom: 40px;">
+                    <div class="card" style="padding: 20px; border-right: 5px solid var(--primary);">
+                        <h3 style="margin-bottom: 10px;"><i class="fa-solid fa-stethoscope" style="color: var(--primary);"></i> التشخيص الأخير</h3>
+                        <p id="patientLastDiagnosis" style="color: var(--text-main); font-weight: bold;">لا يوجد تشخيص حديث</p>
+                        <small id="patientLastDiagnosisMeta" style="color: var(--text-muted);">-</small>
+                    </div>
+                    <div class="card" style="padding: 20px; border-right: 5px solid var(--warning);">
+                        <h3 style="margin-bottom: 10px;"><i class="fa-solid fa-clock-rotate-left" style="color: var(--warning);"></i> الموعد القادم</h3>
+                        <p id="patientNextAppt" style="color: var(--text-main); font-weight: bold;">لا توجد مواعيد قادمة</p>
+                        <small id="patientNextApptMeta" style="color: var(--text-muted);">-</small>
+                    </div>
+                </div>
+            </section>
+
+            <!-- APPOINTMENTS REQUEST SECTION -->
+            <section id="sec-appointments" class="content-section" style="display:none;">
+                <h3 style="margin-bottom: 20px;">طلب ميعاد مع الطبيب</h3>
+                <div class="form-box" style="margin: 0; max-width: 600px;">
+                    <div class="input-group">
+                        <label>الطبيب المعالج</label>
+                        <div style="display: flex; gap: 10px;">
+                            <select style="flex: 1;">
+                                <option>د. أحمد سمير (القلب والأوعية)</option>
+                                <option>د. منى شاكر (أطفال)</option>
+                            </select>
+                            <button type="button" class="btn" style="background: var(--warning); padding: 0 15px;" onclick="document.getElementById('cvModal').style.display='flex'"><i class="fa-solid fa-id-card"></i> السيرة الذاتية للطبيب</button>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>سبب الزيارة باختصار</label>
+                        <textarea rows="3" placeholder="أعاني من..."></textarea>
+                    </div>
+                    <button class="btn" onclick="alert('تم إرسال الطلب للطبيب، وبانتظار تحديد الموعد (تاريخ/وقت).')">إرسال الطلب</button>
+                </div>
+                
+                <h3 style="margin-top: 40px; margin-bottom: 20px;">حالة الطلبات</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>الطبيب</th><th>السبب</th><th>تاريخ/وقت الموعد</th><th>الحالة</th></tr>
+                        </thead>
+                        <tbody id="patientApptsTable">
+                            <tr><td>د. أحمد سمير</td><td>متابعة الضغط</td><td>20 مايو - 10:00 ص</td><td><span class="status active">مؤكد</span></td></tr>
+                            <tr><td>د. منى شاكر</td><td>كشف عام</td><td>بانتظار الطبيب</td><td><span class="status pending">قيد المراجعة</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- LABS & RADIOLOGY SECTION -->
+            <section id="sec-labs" class="content-section" style="display:none;">
+                <div class="grid-container">
+                    <div class="form-box" style="margin: 0;">
+                        <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-flask" style="color:var(--primary);"></i> رفع نتيجة تحليل</h3>
+                        <input type="file" style="margin-bottom: 15px;" accept="image/*,.pdf">
+                        <button class="btn">إضافة التحليل</button>
+                    </div>
+                    <div class="form-box" style="margin: 0;">
+                        <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-x-ray" style="color:var(--primary);"></i> رفع نتيجة أشعة</h3>
+                        <input type="file" style="margin-bottom: 15px;" accept="image/*,.pdf">
+                        <button class="btn">إضافة الأشعة</button>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 40px; margin-bottom: 20px;">الأشعة المرفوعة من قبل المستشفى (السجل الداخلي)</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>نوع المرفق</th><th>التاريخ</th><th>مرفوعة بواسطة</th><th>عرض</th></tr>
+                        </thead>
+                        <tbody id="patientLabsTableBody">
+                            <tr><td>أشعة مقطعية (الصدر)</td><td>12 مايو 2026</td><td>مستشفى Med Track</td><td><button class="btn" style="padding: 5px 15px; font-size:12px;">عرض</button></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- MEDICATIONS SECTION -->
+            <section id="sec-meds" class="content-section" style="display:none;">
+                <h3 style="margin-bottom: 20px;">الأدوية الحالية (بواسطة الطبيب)</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>اسم الدواء</th>
+                                <th>الجرعة</th>
+                                <th>التكرار</th>
+                                <th>المدة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>أوجمنتين 1 جم</td>
+                                <td>حبة واحدة</td>
+                                <td>كل 12 ساعة</td>
+                                <td>7 أيام</td>
+                            </tr>
+                            <tr>
+                                <td>بانادول إكسترا</td>
+                                <td>حبتين</td>
+                                <td>عند اللزوم</td>
+                                <td>حتى زوال الألم</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- CHAT SECTION -->
+            <section id="sec-chat" class="content-section" style="display:none;">
+                <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-comments"></i> محادثة مباشرة مع الطبيب</h3>
+                <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; height: 500px; display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow);">
+                    <!-- Chat Header -->
+                    <div style="padding: 15px 20px; background: var(--primary); color: white; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="width: 45px; height: 45px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 20px;">
+                                <i class="fa-solid fa-user-doctor"></i>
+                            </div>
+                            <div>
+                                <h4 style="margin: 0; font-size: 16px;">د. أحمد سمير (باطنة)</h4>
+                                <small style="display: flex; align-items: center; gap: 5px; opacity: 0.9;"><span style="width: 8px; height: 8px; background: #2ecc71; border-radius: 50%; display: inline-block;"></span> الطاقم الطبي المتابع</small>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Chat Area -->
+                    <div id="patientChatContainer" style="flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: var(--bg-color);">
+                        <!-- Messages -->
+                    </div>
+                    <!-- Input Area -->
+                    <div style="padding: 15px; background: var(--card-bg); border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px; position: relative;">
+                        <div style="position: relative; display: flex; align-items: center;">
+                            <button style="background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 5px;" title="إرفاق ملف" onclick="const m = document.getElementById('patientAttachMenu'); m.style.display = m.style.display === 'flex' ? 'none' : 'flex'"><i class="fa-solid fa-paperclip"></i></button>
+                            <div id="patientAttachMenu" style="display: none; position: absolute; bottom: 100%; right: 0; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px; flex-direction: column; gap: 15px; box-shadow: var(--shadow); z-index: 100; min-width: 140px; margin-bottom: 15px;">
+                                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: var(--text-main); font-size: 14px; margin: 0;" onclick="document.getElementById('patientAttachMenu').style.display='none'">
+                                    <i class="fa-solid fa-image" style="color: var(--primary); font-size: 18px;"></i> صورة / صورة أشعة
+                                    <input type="file" accept="image/*" style="display:none;" onchange="alert('تم إرفاق الصورة بنجاح وسيتم إرسالها للطبيب.')">
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: var(--text-main); font-size: 14px; margin: 0;" onclick="document.getElementById('patientAttachMenu').style.display='none'">
+                                    <i class="fa-solid fa-file-pdf" style="color: var(--danger); font-size: 18px;"></i> ملف PDF
+                                    <input type="file" accept=".pdf" style="display:none;" onchange="alert('تم إرفاق ملف הـ PDF بنجاح.')">
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: var(--text-main); font-size: 14px; margin: 0;" onclick="document.getElementById('patientAttachMenu').style.display='none'">
+                                    <i class="fa-solid fa-file-medical" style="color: var(--success); font-size: 18px;"></i> مستند طبي / تقرير
+                                    <input type="file" accept=".doc,.docx,.txt" style="display:none;" onchange="alert('تم إرفاق المستند بنجاح.')">
+                                </label>
+                            </div>
+                        </div>
+                        <input type="text" id="patientChatInput" placeholder="اكتب رسالتك للطبيب هنا..." style="flex: 1; padding: 12px 15px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--bg-color); outline: none;">
+                        <button class="btn" style="background: #e74c3c; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;" title="تسجيل رسالة صوتية" onclick="alert('جاري تسجيل المقطع الصوتي...')"><i class="fa-solid fa-microphone"></i></button>
+                        <button class="btn" id="patientChatBtn" style="border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            
+
+            <!-- SUPPORT & COMPLAINTS SECTION -->
+            <section id="sec-support" class="content-section" style="display:none;">
+                <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-headset"></i> الدعم الفني والشكاوى</h3>
+                <div class="grid-container">
+                    
+                    <!-- Submit a new complaint -->
+                    <div class="form-box" style="margin: 0; align-self: start;">
+                        <h4 style="margin-bottom: 20px; color: var(--text-main);"><i class="fa-solid fa-ticket"></i> تقديم شكوى أو استفسار جديد</h4>
+                        <div class="input-group">
+                            <label>نوع المشكلة</label>
+                            <select>
+                                <option>مشكلة تقنية في الموقع</option>
+                                <option>شكوى بخصوص موعد طبي أو طبيب</option>
+                                <option>استفسار مالي أو فواتير</option>
+                                <option>أخرى</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>تفاصيل المشكلة</label>
+                            <textarea rows="5" placeholder="اكتب تفاصيل مشكلتك هنا بوضوح لكي نتمكن من مساعدتك..."></textarea>
+                        </div>
+                        <button class="btn" style="width: 100%;" onclick="alert('تم إرسال الشكوى للإدارة بنجاح! سيتم مراجعتها والرد عليك في أسرع وقت.')">إرسال الشكوى <i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+
+                    <!-- Live Support Chat -->
+                    <div class="form-box" style="margin: 0; padding: 0; overflow: hidden; display: flex; flex-direction: column; height: 500px; box-shadow: var(--shadow);">
+                        <div style="padding: 15px; background: var(--warning); color: white; display: flex; align-items: center; gap: 10px;">
+                            <i class="fa-solid fa-user-shield" style="font-size: 20px;"></i> محادثة مباشرة مع الإدارة
+                        </div>
+                        <div style="flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: var(--bg-color);">
+                            <div style="align-self: flex-start; background: var(--card-bg); padding: 10px 15px; border-radius: 15px; border-top-right-radius: 0; box-shadow: var(--shadow);">
+                                <strong style="color: var(--warning);"><i class="fa-solid fa-robot"></i> الرد الآلي:</strong><br>
+                                مرحباً بك في قسم الدعم الفني. كيف يمكننا مساعدتك اليوم؟
+                            </div>
+                            <div style="align-self: flex-end; background: var(--primary); color: white; padding: 10px 15px; border-radius: 15px; border-top-left-radius: 0; box-shadow: var(--shadow);">
+                                عندي مشكلة في حجز موعد جديد، الموقع يتوقف.
+                            </div>
+                            <div style="align-self: flex-start; background: var(--card-bg); padding: 10px 15px; border-radius: 15px; border-top-right-radius: 0; box-shadow: var(--shadow);">
+                                <strong style="color: var(--warning);"><i class="fa-solid fa-headset"></i> موظف الدعم:</strong><br>
+                                نعتذر عن هذا الخلل. جاري فحص المشكلة الآن وحلها خلال دقائق. هل تفضل أن أقوم بحجز الموعد لك يدوياً؟
+                            </div>
+                        </div>
+                        <div style="padding: 15px; border-top: 1px solid var(--border-color); background: var(--card-bg); display: flex; gap: 10px;">
+                            <input type="text" placeholder="اكتب رسالتك للإدارة هنا..." style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-main);">
+                            <button class="btn" style="background: var(--warning);"><i class="fa-solid fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- PROFILE SETTINGS SECTION -->
+            <section id="sec-profile" class="content-section" style="display:none;">
+                <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-user-gear"></i> إعدادات الحساب الشخصي</h3>
+                
+                <div class="grid-container">
+                    <!-- Profile Picture & Info -->
+                    <div class="form-box" style="margin: 0; text-align: center;">
+                        <div style="position: relative; display: inline-block; margin-bottom: 20px;">
+                            <img src="https://ui-avatars.com/api/?name=Salem&background=10b981&color=fff" id="patientProfileImage" alt="Profile" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--secondary); box-shadow: var(--shadow);">
+                            <label for="uploadProfilePatient" style="position: absolute; bottom: 0; right: 0; background: var(--primary); color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 3px solid var(--card-bg); transition: var(--transition);">
+                                <i class="fa-solid fa-camera"></i>
+                            </label>
+                            <input type="file" id="uploadProfilePatient" style="display: none;" accept="image/*" onchange="alert('تم اختيار الصورة! سيتم تغييرها قريباً.')">
+                        </div>
+                        <h3 style="margin-bottom: 5px;">سالم عبدالله</h3>
+                        <p style="color: var(--text-muted); font-size: 14px;">مريض - حساب نشط</p>
+                        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">patient@test.com</p>
+                    </div>
+
+                    <!-- Registration Data -->
+                    <div class="form-box" style="margin: 0;">
+                        <h4 style="margin-bottom: 20px; color: var(--text-main);"><i class="fa-solid fa-address-card"></i> البيانات الشخصية والطبية</h4>
+                        <div style="display: flex; gap: 15px;">
+                            <div class="input-group" style="flex: 1;">
+                                <label>العمر</label>
+                                <input type="text" value="35 سنة" readonly style="background: var(--bg-color); cursor: not-allowed;">
+                            </div>
+                            <div class="input-group" style="flex: 1;">
+                                <label>النوع</label>
+                                <input type="text" value="ذكر" readonly style="background: var(--bg-color); cursor: not-allowed;">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>رقم الهاتف</label>
+                            <input type="text" value="01012345678" readonly style="background: var(--bg-color); cursor: not-allowed;">
+                        </div>
+                        <div class="input-group">
+                            <label>الأمراض المزمنة / التاريخ المرضي</label>
+                            <textarea rows="2" readonly style="background: var(--bg-color); cursor: not-allowed;">الربو التحسسي، لا توجد أمراض مزمنة أخرى.</textarea>
+                        </div>
+                        <div class="input-group" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+                            <label style="color: var(--primary); font-size: 14px;"><i class="fa-solid fa-user-doctor"></i> الطبيب المتابع للحالة</label>
+                            <input type="text" value="د. أحمد سمير (باطنة)" readonly style="background: rgba(10,124,255,0.05); color: var(--primary); font-weight: bold; border-color: var(--primary); cursor: default;">
+                        </div>
+                    </div>
+
+                    <!-- Change Password -->
+                    <div class="form-box" style="margin: 0;">
+                        <h4 style="margin-bottom: 20px; color: var(--text-main);"><i class="fa-solid fa-lock"></i> تغيير كلمة المرور والبيانات</h4>
+                        <div class="input-group">
+                            <label>كلمة المرور الحالية</label>
+                            <input type="password" placeholder="أدخل كلمة المرور الحالية...">
+                        </div>
+                        <div class="input-group">
+                            <label>كلمة المرور الجديدة</label>
+                            <input type="password" placeholder="أدخل كلمة المرور الجديدة...">
+                        </div>
+                        <div class="input-group">
+                            <label>تأكيد كلمة المرور الجديدة</label>
+                            <input type="password" placeholder="أعد إدخال كلمة المرور الجديدة...">
+                        </div>
+                        <button class="btn" style="width: 100%; margin-top: 10px;" onclick="alert('تم حفظ التعديلات بنجاح!')">حفظ التعديلات <i class="fa-solid fa-floppy-disk"></i></button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Doctor CV Modal -->
+    <div id="cvModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+        <div class="form-box" style="width: 90%; max-width: 500px; position: relative; margin: 0; padding: 30px;">
+            <button onclick="document.getElementById('cvModal').style.display='none'" style="position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--danger);"><i class="fa-solid fa-xmark"></i></button>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <img src="https://ui-avatars.com/api/?name=Dr+Ahmed&background=3b82f6&color=fff" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); margin-bottom: 10px;">
+                <h3 style="color: var(--text-main);">د. أحمد سمير</h3>
+                <p style="color: var(--primary); font-weight: bold; font-size: 14px;">استشاري أول القلب والأوعية الدموية</p>
+            </div>
+            
+            <div style="background: var(--bg-color); padding: 15px; border-radius: 10px; margin-bottom: 15px; border-right: 4px solid var(--primary);">
+                <strong style="color: var(--text-main);"><i class="fa-solid fa-graduation-cap"></i> المؤهلات العلمية:</strong>
+                <p style="font-size: 14px; margin-top: 5px; line-height: 1.6;">- دكتوراه أمراض القلب والأوعية الدموية (2015)<br>- زمالة الكلية الملكية للأطباء (MRCP)</p>
+            </div>
+            
+            <div style="background: var(--bg-color); padding: 15px; border-radius: 10px; margin-bottom: 15px; border-right: 4px solid var(--warning);">
+                <strong style="color: var(--text-main);"><i class="fa-solid fa-briefcase-medical"></i> الخبرات السابقة:</strong>
+                <p style="font-size: 14px; margin-top: 5px; line-height: 1.6;">- رئيس قسم الرعاية المركزة للقلب (2018 - 2023)<br>- أستاذ مساعد بكلية الطب</p>
+            </div>
+
+            <div style="background: var(--bg-color); padding: 15px; border-radius: 10px; margin-bottom: 15px; border-right: 4px solid var(--success);">
+                <strong style="color: var(--text-main);"><i class="fa-solid fa-stethoscope"></i> التخصصات الدقيقة:</strong>
+                <p style="font-size: 14px; margin-top: 5px; line-height: 1.6;">قسطرة القلب العلاجية، الموجات الصوتية على القلب (الإيكو)، تركيب الدعامات</p>
+            </div>
+            <button class="btn" style="width: 100%; margin-top: 10px; background: var(--primary);" onclick="document.getElementById('cvModal').style.display='none'">إغلاق وحجز الموعد <i class="fa-solid fa-calendar-check"></i></button>
+        </div>
+    </div>
+
+    <!-- Patient QR Modal -->
+    <div id="patientQrModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+        <div class="form-box" style="width: 90%; max-width: 400px; position: relative; margin: 0; padding: 40px 30px; text-align: center; border-radius: 20px;">
+            <button onclick="document.getElementById('patientQrModal').style.display='none'" style="position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--danger);"><i class="fa-solid fa-xmark"></i></button>
+            <h3 style="color: var(--text-main); margin-bottom: 10px;">الهوية الطبية للمريض</h3>
+            <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 14px;">اعرض هذا الكود للطبيب في العيادة لمسحه</p>
+            
+            <div style="background: white; padding: 20px; border-radius: 15px; display: inline-block; margin-bottom: 20px; box-shadow: var(--shadow);">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=MT-12345" alt="Patient QR Code" style="width: 250px; height: 250px;">
+            </div>
+            
+            <h2 style="color: var(--primary); font-family: monospace; letter-spacing: 2px;">MT-12345</h2>
+            <p style="color: var(--text-main); font-weight: bold; font-size: 18px;">سالم عبدالله</p>
+        </div>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        function showSec(id, el) {
+            document.querySelectorAll('.sidebar ul li a').forEach(a => a.classList.remove('active'));
+            el.classList.add('active');
+            document.querySelectorAll('.content-section').forEach(sec => sec.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
+        }
+
+        // Load data from localStorage to link doctor actions with patient dashboard
+        window.addEventListener('DOMContentLoaded', () => {
+            // -- Seed Dummy Data if empty (per user request) --
+            let savedDiagnosis = localStorage.getItem('patientDiagnosis');
+            if(!savedDiagnosis) {
+                const dummyDiag = { text: 'التهاب حاد في الشعب الهوائية، يحتاج لراحة تامة.', doctor: 'د. أحمد سمير', date: new Date().toLocaleDateString('ar-EG') };
+                localStorage.setItem('patientDiagnosis', JSON.stringify(dummyDiag));
+                savedDiagnosis = JSON.stringify(dummyDiag);
+                setTimeout(() => { if(window.showToast) showToast('تنبيه: تم تحديث ملفك الطبي بتشخيص جديد من طبيبك.'); }, 1500);
+            }
+
+            let savedAppt = localStorage.getItem('patientAppointment');
+            if(!savedAppt) {
+                // Generate a dummy future date
+                const futureDate = new Date();
+                futureDate.setDate(futureDate.getDate() + 2);
+                const dummyDateStr = futureDate.toLocaleDateString('ar-EG', { month: 'long', day: 'numeric' }) + ' - 10:30 ص';
+                
+                const dummyAppt = { patient: 'سالم عبدالله', doctor: 'د. أحمد سمير', datetime: dummyDateStr, status: 'مؤكد' };
+                localStorage.setItem('patientAppointment', JSON.stringify(dummyAppt));
+                savedAppt = JSON.stringify(dummyAppt);
+                setTimeout(() => { if(window.showToast) showToast('تنبيه: لديك موعد قادم تم تأكيده مع د. أحمد سمير.'); }, 3000);
+            }
+
+            if(savedDiagnosis) {
+                const data = JSON.parse(savedDiagnosis);
+                document.getElementById('patientLastDiagnosis').innerText = data.text;
+                document.getElementById('patientLastDiagnosisMeta').innerText = 'الطبيب: ' + data.doctor + ' - ' + data.date;
+            }
+
+            if(savedAppt) {
+                const apptData = JSON.parse(savedAppt);
+                
+                // Update Next Appointment Card
+                document.getElementById('patientNextAppt').innerText = apptData.datetime;
+                document.getElementById('patientNextApptMeta').innerText = 'الطبيب: ' + apptData.doctor;
+
+                // Prepend to Appointments Table
+                const tbody = document.getElementById('patientApptsTable');
+                if(tbody) {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${apptData.doctor}</td>
+                        <td>مراجعة عامة (موعد مجدول)</td>
+                        <td>${apptData.datetime}</td>
+                        <td><span class="status active">${apptData.status}</span></td>
+                    `;
+                    tbody.insertBefore(tr, tbody.firstChild);
+                }
+            }
+        });
+    </script>
+
+    <!-- Emergency Call Button -->
+    <a href="tel:997" class="emergency-btn" title="اتصال بالطوارئ والاسعاف">
+        <i class="fa-solid fa-truck-medical"></i>
+        <span class="emergency-text">طوارئ / إسعاف</span>
+    </a>
+</body>
+</html>

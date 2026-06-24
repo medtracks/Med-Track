@@ -45,7 +45,7 @@ window.showToast = function(msg) {
 
 document.addEventListener('DOMContentLoaded', () => {
     // Inject Professional Styles and Loader
-    const isRoot = window.location.pathname.endsWith('index.HTML') || window.location.pathname === '/' || !window.location.pathname.includes('/pages/');
+    const isRoot = window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || !window.location.pathname.includes('/pages/');
     const logoPath = isRoot ? 'logo.svg.png' : '../logo.svg.png';
 
     const loaderHtml = `

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة الموظفين والأطباء - Med Track</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+        .login-tabs { display: flex; gap: 10px; margin-bottom: 30px; }
+        .login-tab { flex: 1; padding: 10px; text-align: center; background: var(--bg-color); border-radius: 8px; cursor: pointer; font-weight: 600; color: var(--text-muted); transition: var(--transition); border: 2px solid transparent; }
+        .login-tab.active { background: rgba(10, 124, 255, 0.1); color: var(--primary); border-color: var(--primary); }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">
+            <img src="../logo.svg.png" alt="Med Track Logo" style="width: 80px; height: auto; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">
+            Med Track
+        </div>
+        <ul>
+            <li><a href="../index.html">الرئيسية</a></li>
+        </ul>
+    </nav>
+
+    <section class="section" style="min-height: 80vh; display: flex; align-items: center;">
+        <div class="form-box" style="width: 100%;">
+            <h2 class="title" style="margin-bottom: 20px;">بوابة الموظفين والأطباء</h2>
+            <p id="pageSubtitle" style="text-align: center; margin-bottom: 30px;">تسجيل الدخول للنظام</p>
+            
+            <div class="login-tabs" style="display: none;">
+                <div class="login-tab active" onclick="selectRole('admin', this)">المستشفى</div>
+                <div class="login-tab" onclick="selectRole('lab', this)">الأشعة والتحاليل</div>
+                <div class="login-tab" onclick="selectRole('doctor', this)">الأطباء</div>
+            </div>
+
+            <div id="loginSection">
+                <div id="dummyDataBox" style="background: rgba(10,124,255,0.1); padding: 10px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-size: 14px; border: 1px dashed var(--primary); color: var(--primary);">
+                    <b>بيانات تجريبية للمستشفى:</b><br>اليوزر: admin@test.com | الرمز: admin123
+                </div>
+
+                <div class="input-group">
+                    <label>البريد الإلكتروني</label>
+                    <input type="text" id="loginUsername" placeholder="أدخل البيانات هنا...">
+                </div>
+                
+                <div class="input-group">
+                    <label>كلمة المرور</label>
+                    <input type="password" id="loginPassword" placeholder="أدخل كلمة المرور...">
+                </div>
+                
+                <button class="btn" style="width: 100%; margin-top: 10px;" onclick="doLogin()">دخول <i class="fa-solid fa-right-to-bracket"></i></button>
+            </div>
+
+            <div id="registerSection" style="display: none;">
+                <div class="input-group">
+                    <label>الاسم الرباعي</label>
+                    <input type="text" placeholder="أدخل اسمك الكامل...">
+                </div>
+                <div class="input-group">
+                    <label>البريد الإلكتروني</label>
+                    <input type="email" placeholder="أدخل بريدك الإلكتروني...">
+                </div>
+                <div class="input-group">
+                    <label>كلمة المرور</label>
+                    <input type="password" placeholder="أدخل كلمة المرور...">
+                </div>
+                <div class="input-group">
+                    <label>رقم الهاتف</label>
+                    <input type="tel" placeholder="أدخل رقم الهاتف...">
+                </div>
+
+                <!-- Doctor Specific Fields -->
+                <div id="doctorRegFields">
+                    <div class="input-group">
+                        <label>التخصص الطبي</label>
+                        <input type="text" placeholder="أدخل تخصصك الطبي...">
+                    </div>
+                    <div class="input-group">
+                        <label>الشهادات والخبرات</label>
+                        <textarea placeholder="اكتب نبذة عن خبراتك الطبية والمؤهلات..." rows="2"></textarea>
+                    </div>
+                    <div style="background: rgba(245, 158, 11, 0.1); color: var(--warning); padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; border: 1px solid var(--warning);">
+                        <i class="fa-solid fa-triangle-exclamation"></i> <b>تنبيه:</b> سيتم مراجعة بياناتك من قبل إدارة الموقع. لن يتم تفعيل حسابك إلا بعد الموافقة.
+                    </div>
+                </div>
+
+                <button class="btn" style="width: 100%; margin-top: 10px;" onclick="doRegister()">تقديم طلب الانضمام <i class="fa-solid fa-user-plus"></i></button>
+            </div>
+
+            <div id="toggleAuthModeDiv" style="text-align: center; margin-top: 20px; display: none;">
+                <a href="#" id="toggleAuthModeBtn" onclick="toggleAuthMode()" style="font-size: 15px; color: var(--primary); font-weight: bold; text-decoration: underline;">طبيب جديد؟ إنشاء طلب انضمام</a>
+            </div>
+
+        </div>
+    </section>
+
+    <script src="../script.js"></script>
+    <script>
+        let currentRole = 'admin';
+        let isRegisterMode = false;
+
+        function toggleAuthMode() {
+            isRegisterMode = !isRegisterMode;
+            const loginSec = document.getElementById('loginSection');
+            const regSec = document.getElementById('registerSection');
+            const btn = document.getElementById('toggleAuthModeBtn');
+            const title = document.querySelector('.title');
+
+            if(isRegisterMode) {
+                loginSec.style.display = 'none';
+                regSec.style.display = 'block';
+                btn.innerText = 'لديك حساب طبيب بالفعل؟ تسجيل الدخول';
+                title.innerText = 'تقديم طلب انضمام كطبيب';
+            } else {
+                loginSec.style.display = 'block';
+                regSec.style.display = 'none';
+                btn.innerText = 'طبيب جديد؟ إنشاء طلب انضمام';
+                if(currentRole === 'doctor') title.innerText = 'بوابة الأطباء';
+                else if(currentRole === 'lab') title.innerText = 'بوابة مركز الأشعة والتحاليل';
+                else title.innerText = 'بوابة المستشفى';
+            }
+        }
+
+        function selectRole(role, el) {
+            currentRole = role;
+            document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            
+            const usernameInput = document.getElementById('loginUsername');
+            const passwordInput = document.getElementById('loginPassword');
+            const dummyBox = document.getElementById('dummyDataBox');
+            const toggleDiv = document.getElementById('toggleAuthModeDiv');
+            const pageTitle = document.querySelector('.title');
+            const pageSubtitle = document.getElementById('pageSubtitle');
+
+            if(isRegisterMode) toggleAuthMode(); // Reset to login view when switching tabs
+
+            if (role === 'admin') {
+                usernameInput.value = 'admin@test.com';
+                passwordInput.value = 'admin123';
+                dummyBox.innerHTML = '<b>بيانات تجريبية للمستشفى:</b><br>اليوزر: admin@test.com | الرمز: admin123';
+                toggleDiv.style.display = 'none';
+                if(!isRegisterMode) { pageTitle.innerText = 'بوابة المستشفى'; pageSubtitle.innerText = 'تسجيل الدخول الخاص بإدارة المستشفى'; }
+            } else if (role === 'lab') {
+                usernameInput.value = 'lab@test.com';
+                passwordInput.value = 'lab123';
+                dummyBox.innerHTML = '<b>بيانات تجريبية لمكتب التحاليل:</b><br>اليوزر: lab@test.com | الرمز: lab123';
+                toggleDiv.style.display = 'none';
+                if(!isRegisterMode) { pageTitle.innerText = 'بوابة مركز الأشعة والتحاليل'; pageSubtitle.innerText = 'تسجيل الدخول الخاص بمركز الأشعة'; }
+            } else if (role === 'doctor') {
+                usernameInput.value = 'dr.ahmed@test.com';
+                passwordInput.value = 'doc123';
+                dummyBox.innerHTML = '<b>بيانات تجريبية للطبيب:</b><br>اليوزر: dr.ahmed@test.com | الرمز: doc123';
+                toggleDiv.style.display = 'block';
+                if(!isRegisterMode) { pageTitle.innerText = 'بوابة الأطباء'; pageSubtitle.innerText = 'تسجيل الدخول الخاص بالأطباء'; }
+            }
+        }
+
+        window.onload = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const role = urlParams.get('role');
+            if (role) {
+                const tabs = document.querySelectorAll('.login-tab');
+                let tabToClick;
+                if (role === 'doctor') tabToClick = tabs[2];
+                else if (role === 'lab') tabToClick = tabs[1];
+                else if (role === 'admin') tabToClick = tabs[0];
+                
+                if (tabToClick) {
+                    selectRole(role, tabToClick);
+                    return;
+                }
+            }
+            document.getElementById('loginUsername').value = 'admin@test.com';
+            document.getElementById('loginPassword').value = 'admin123';
+        }
+
+        function doRegister() {
+            if(currentRole === 'doctor') {
+                alert("تم إرسال طلب الانضمام بنجاح. سيتم مراجعة الطلب من قبل الإدارة والموافقة عليه قريباً.");
+                toggleAuthMode();
+            }
+        }
+
+        function doLogin() {
+            if(currentRole === 'admin') window.location.href = 'admin.html';
+            else if(currentRole === 'lab') window.location.href = 'lab.html';
+            else if(currentRole === 'doctor') window.location.href = 'doctor.html';
+        }
+    </script>
+</body>
+</html>

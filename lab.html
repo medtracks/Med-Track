@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ar" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكتب الأشعة والتحاليل - Med Track</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+<body>
+
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="../logo.svg.png" alt="Med Track Logo" style="width: 70px; height: auto; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">
+                Med Track
+            </div>
+            <ul>
+                <li><a href="#" class="active" onclick="showSec('sec-upload', this)"><i class="fa-solid fa-cloud-arrow-up"></i> رفع نتيجة جديدة</a></li>
+                <li><a href="#" onclick="showSec('sec-profile', this)"><i class="fa-solid fa-user-gear"></i> إعدادات المكتب</a></li>
+            </ul>
+            <ul style="flex: 0;">
+                <li><a href="../index.html" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header>
+                <h2>لوحة تحكم مختبر الأشعة والتحاليل</h2>
+                <div class="user-info">
+                    
+                    <span>مختبر الأمل للتحاليل</span>
+                    <img src="https://ui-avatars.com/api/?name=Lab&background=10b981&color=fff" alt="User">
+                </div>
+            </header>
+
+            <!-- UPLOAD SECTION -->
+            <section id="sec-upload" class="content-section">
+                <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-cloud-arrow-up"></i> رفع أشعة أو تحليل لمريض</h3>
+                
+                <div class="form-box" style="margin: 0; max-width: 600px;">
+                    <p style="color: var(--text-muted); margin-bottom: 20px;">قم بمسح الباركود الخاص بالمريض (من هاتفه) أو أدخل كوده اليدوي لرفع النتيجة مباشرة إلى ملفه الطبي.</p>
+                    
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                        <div class="input-group" style="flex: 1; margin: 0;">
+                            <label>كود المريض (ID)</label>
+                            <input type="text" id="patientIdInput" placeholder="مثال: MT-12345">
+                        </div>
+                        <button class="btn" style="background: var(--success); align-self: flex-end; padding: 12px 20px;" onclick="startQRScanner()"><i class="fa-solid fa-qrcode"></i> مسح QR</button>
+                    </div>
+
+                    <div class="input-group">
+                        <label>نوع المرفق</label>
+                        <select id="labTypeSelect" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-main);">
+                            <option value="تحليل دم (CBC)">تحليل دم (CBC)</option>
+                            <option value="تحليل سكر تراكمي">تحليل سكر تراكمي</option>
+                            <option value="أشعة سينية (X-Ray)">أشعة سينية (X-Ray)</option>
+                            <option value="أشعة مقطعية (CT)">أشعة مقطعية (CT)</option>
+                            <option value="رنين مغناطيسي (MRI)">رنين مغناطيسي (MRI)</option>
+                            <option value="أخرى...">أخرى...</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>ملاحظات إضافية (اختياري)</label>
+                        <textarea rows="2" placeholder="أي ملاحظات لطبيب المريض..."></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label>ارفع الملف (PDF أو صورة)</label>
+                        <div style="border: 2px dashed var(--primary); padding: 30px; border-radius: 12px; text-align: center; cursor: pointer; transition: var(--transition);" onmouseover="this.style.background='rgba(10,124,255,0.05)'" onmouseout="this.style.background='transparent'">
+                            <i class="fa-solid fa-file-arrow-up" style="font-size: 40px; color: var(--primary); margin-bottom: 15px;"></i>
+                            <p style="color: var(--text-muted); margin-bottom: 10px;">اضغط هنا لاختيار الملف أو قم بسحبه وإفلاته</p>
+                            <input type="file" style="display: none;" id="labFileUpload">
+                            <button class="btn btn-outline" onclick="document.getElementById('labFileUpload').click()">استعراض الملفات</button>
+                        </div>
+                    </div>
+
+                    <button class="btn" id="uploadLabBtn" style="width: 100%; font-size: 16px; padding: 12px; margin-top: 10px;" onclick="uploadLabFromDashboard()">إرسال لملف المريض <i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </section>
+
+            <!-- PROFILE SECTION -->
+            <section id="sec-profile" class="content-section" style="display:none;">
+                <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-user-gear"></i> إعدادات المكتب (الملف الشخصي)</h3>
+                
+                <div class="grid-container">
+                    <!-- Profile Picture & Info -->
+                    <div class="form-box" style="margin: 0; text-align: center;">
+                        <div style="position: relative; display: inline-block; margin-bottom: 20px;">
+                            <img src="https://ui-avatars.com/api/?name=Lab&background=10b981&color=fff" id="labProfileImage" alt="Profile" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary); box-shadow: var(--shadow);">
+                            <label for="uploadProfileLab" style="position: absolute; bottom: 0; right: 0; background: var(--success); color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 3px solid var(--card-bg); transition: var(--transition);">
+                                <i class="fa-solid fa-camera"></i>
+                            </label>
+                            <input type="file" id="uploadProfileLab" style="display: none;" accept="image/*" onchange="alert('تم اختيار الصورة بنجاح! سيتم تحديث شعار المعمل.')">
+                        </div>
+                        <h3 style="margin-bottom: 5px;">مختبر الأمل للتحاليل</h3>
+                        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">معمل تحاليل معتمد في النظام</p>
+                    </div>
+
+                    <!-- Change Password & Info -->
+                    <div class="form-box" style="margin: 0;">
+                        <h4 style="margin-bottom: 20px; color: var(--text-main);"><i class="fa-solid fa-lock"></i> تحديث البيانات وكلمة المرور</h4>
+                        <div class="input-group">
+                            <label>اسم المختبر</label>
+                            <input type="text" value="مختبر الأمل للتحاليل">
+                        </div>
+                        <div class="input-group">
+                            <label>رقم هاتف التواصل</label>
+                            <input type="tel" value="01012345678">
+                        </div>
+                        <div class="input-group">
+                            <label>كلمة المرور الحالية</label>
+                            <input type="password" placeholder="أدخل كلمة المرور الحالية...">
+                        </div>
+                        <div class="input-group">
+                            <label>كلمة المرور الجديدة</label>
+                            <input type="password" placeholder="أدخل كلمة المرور الجديدة...">
+                        </div>
+                        <button class="btn" style="width: 100%; margin-top: 10px;" onclick="alert('تم حفظ إعدادات المكتب بنجاح!')">حفظ التعديلات <i class="fa-solid fa-floppy-disk"></i></button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- QR Scanner Modal -->
+    <div id="qrScannerModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+        <div class="form-box" style="width: 90%; max-width: 400px; position: relative; margin: 0; padding: 20px; text-align: center;">
+            <button onclick="closeQRScanner()" style="position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--danger); z-index: 10;"><i class="fa-solid fa-xmark"></i></button>
+            <h3 style="margin-bottom: 15px;"><i class="fa-solid fa-qrcode"></i> مسح كود المريض (QR)</h3>
+            <div id="qr-reader" style="width: 100%; border-radius: 12px; overflow: hidden;"></div>
+        </div>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        function showSec(id, el) {
+            document.querySelectorAll('.sidebar ul li a').forEach(a => a.classList.remove('active'));
+            el.classList.add('active');
+            document.querySelectorAll('.content-section').forEach(sec => sec.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
+        }
+
+        let html5QrcodeScanner;
+        function startQRScanner() {
+            document.getElementById('qrScannerModal').style.display = 'flex';
+            if(html5QrcodeScanner) {
+                html5QrcodeScanner.clear();
+            }
+            const qrboxSize = window.innerWidth < 500 ? 200 : 250;
+            html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: {width: qrboxSize, height: qrboxSize} }, false);
+            html5QrcodeScanner.render((decodedText) => {
+                document.getElementById('patientIdInput').value = decodedText;
+                closeQRScanner();
+                alert('تم التعرف على كود المريض: ' + decodedText);
+            }, () => {});
+        }
+        function closeQRScanner() {
+            document.getElementById('qrScannerModal').style.display = 'none';
+            if(html5QrcodeScanner) {
+                html5QrcodeScanner.clear();
+                html5QrcodeScanner = null;
+            }
+        }
+    </script>
+
+    <!-- Emergency Call Button -->
+    <a href="tel:997" class="emergency-btn" title="اتصال بالطوارئ والاسعاف">
+        <i class="fa-solid fa-truck-medical"></i>
+        <span class="emergency-text">طوارئ / إسعاف</span>
+    </a>
+</body>
+</html>
+

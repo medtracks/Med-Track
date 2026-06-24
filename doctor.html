@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة الطبيب - Med Track</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+
+<body>
+
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="../logo.svg.png" alt="Med Track Logo"
+                    style="width: 70px; height: auto; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">
+                Med Track
+            </div>
+            <ul>
+                <li><a href="#" class="active" onclick="showSec('sec-schedule', this)"><i
+                            class="fa-solid fa-calendar-day"></i> جدول اليوم</a></li>
+                <li><a href="#" onclick="showSec('sec-patients', this)"><i class="fa-solid fa-users"></i> قائمة
+                        المرضى</a></li>
+                <li><a href="#" onclick="showSec('sec-prescriptions', this)"><i
+                            class="fa-solid fa-file-prescription"></i> كتابة روشتة تقرير</a></li>
+                <li><a href="#" onclick="showSec('sec-chat', this)"><i class="fa-solid fa-comments"></i> رسائل
+                        المرضى</a></li>
+                <li><a href="#" onclick="showSec('sec-labs', this)"><i class="fa-solid fa-vial-virus"></i> التحاليل
+                        والأشعة المرفقة</a></li>
+                <li><a href="#" id="doctorProfileLink" onclick="showSec('sec-profile', this)"><i
+                            class="fa-solid fa-user-gear"></i> إعدادات الحساب</a></li>
+            </ul>
+            <ul style="flex: 0;">
+                <li><a href="../index.html" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i>
+                        تسجيل الخروج</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="dash-header">
+                <h2>بوابة الطبيب</h2>
+                <div class="user-info" style="gap: 15px;">
+                    <!-- QR Code Square -->
+                    <div id="headerQrContainer" style="background: white; padding: 3px; border-radius: 6px; box-shadow: var(--shadow); border: 1px dashed var(--border-color); display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; cursor: pointer;" title="امسح الكود لدخول المريض" onclick="if(this.querySelector('img').style.display==='block'){ window.open(this.querySelector('img').src.replace('size=150x150', 'size=400x400'), '_blank'); } else { alert('يرجى إضافة الرابط من لوحة الإدارة أولاً.'); }">
+                        <i id="headerQrPlaceholder" class="fa-solid fa-qrcode" style="color: var(--text-muted); font-size: 20px;"></i>
+                        <img id="headerQrImg" src="" alt="QR" style="width: 100%; height: 100%; display: none;">
+                    </div>
+                    
+                    <div style="text-align: left;">
+                        <h4>د. أحمد سمير</h4>
+                        <small style="color: var(--text-muted);">استشاري القلب والأوعية الدموية</small>
+                    </div>
+                    <img src="https://ui-avatars.com/api/?name=Dr+Ahmed&background=3b82f6&color=fff" alt="Doctor"
+                        style="cursor: pointer; border: 2px solid var(--primary); transition: var(--transition);"
+                        onclick="document.getElementById('doctorProfileLink').click()"
+                        onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"
+                        title="الدخول لإعدادات الحساب">
+                </div>
+            </header>
+
+            <!-- SCHEDULE & REQUESTS SECTION -->
+            <section id="sec-schedule" class="content-section">
+                <div class="grid-container" style="margin-bottom: 40px;">
+                    <div class="card" style="padding: 20px; border-right: 5px solid var(--primary);">
+                        <h3 style="margin-bottom: 10px;"><i class="fa-solid fa-users"
+                                style="color: var(--primary);"></i> مرضى اليوم</h3>
+                        <p style="color: var(--text-main); font-size: 24px; font-weight: bold;">12 مريض</p>
+                        <small style="color: var(--text-muted);">تم الكشف على 4 مرضى</small>
+                    </div>
+                    <div class="card" style="padding: 20px; border-right: 5px solid var(--warning);">
+                        <h3 style="margin-bottom: 10px;"><i class="fa-solid fa-bell" style="color: var(--warning);"></i>
+                            طلبات معلقة</h3>
+                        <p style="color: var(--text-main); font-weight: bold;">3 طلبات ميعاد جديدة</p>
+                        <small style="color: var(--text-muted);">تحتاج لتحديد وقت</small>
+                    </div>
+                    <div class="card" style="padding: 20px; border-right: 5px solid var(--warning);">
+                        <h3 style="margin-bottom: 10px;"><i class="fa-solid fa-bell" style="color: var(--warning);"></i>
+                            طلبات معلقة</h3>
+                        <p style="color: var(--text-main); font-weight: bold;">3 طلبات ميعاد جديدة</p>
+                        <small style="color: var(--text-muted);">تحتاج لتحديد وقت</small>
+                    </div>
+                </div>
+
+                <h3 style="margin-bottom: 20px; color:var(--warning);">طلبات المواعيد (بانتظار الموافقة)</h3>
+                <div class="table-container" style="margin-bottom: 40px;">
+                    <table>
+                        <tr>
+                            <th>اسم المريض</th>
+                            <th>السبب</th>
+                            <th>تحديد الموعد (التاريخ والوقت)</th>
+                            <th>إجراء</th>
+                        </tr>
+                        <tr>
+                            <td>سالم عبدالله</td>
+                            <td>كشف عام (التهاب متكرر)</td>
+                            <td><input type="datetime-local" id="salemApptTime"
+                                    style="padding: 5px; border-radius: 5px; border: 1px solid var(--border-color);">
+                            </td>
+                            <td><button class="btn" style="padding: 5px 15px; font-size: 13px;"
+                                    onclick="confirmAppointment('سالم عبدالله', document.getElementById('salemApptTime').value)">موافقة
+                                    وتأكيد</button></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <h3 style="margin-bottom: 20px;">جدول مواعيد اليوم المؤكدة</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>الوقت</th>
+                                <th>اسم المريض</th>
+                                <th>نوع الكشف</th>
+                                <th>Medical ID</th>
+                                <th>إجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>10:00 ص</td>
+                                <td>سالم عبدالله</td>
+                                <td>متابعة</td>
+                                <td>MT-12345</td>
+                                <td>
+                                    <button class="btn btn-outline" style="padding: 5px 10px; font-size: 12px; margin-left: 5px;" onclick="openDiagnoseModal('سالم عبدالله')">تشخيص</button>
+                                    <button class="btn" style="padding: 5px 10px; font-size: 12px;" onclick="document.getElementById('patientDetailsModal').style.display='flex'">فتح الملف</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>10:30 ص</td>
+                                <td>خالد عبدالرحمن</td>
+                                <td>كشف جديد</td>
+                                <td>MT-5930</td>
+                                <td>
+                                    <button class="btn btn-outline" style="padding: 5px 10px; font-size: 12px; margin-left: 5px;" onclick="openDiagnoseModal('خالد عبدالرحمن')">تشخيص</button>
+                                    <button class="btn" style="padding: 5px 10px; font-size: 12px;" onclick="document.getElementById('patientDetailsModal').style.display='flex'">فتح الملف</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- PATIENTS LIST SECTION -->
+            <section id="sec-patients" class="content-section" style="display:none;">
+                <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-users"></i> متابعة مرضى العيادة</h3>
+
+                <!-- Search Bar -->
+                <div
+                    style="display: flex; gap: 10px; margin-bottom: 20px; background: var(--card-bg); padding: 15px; border-radius: 12px; box-shadow: var(--shadow); align-items: center;">
+                    <input type="text" id="patientSearchInput"
+                        placeholder="ابحث باسم المريض، كود الملف (ID)، أو امسح الباركود..."
+                        style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-main); font-family: inherit;">
+                    <button class="btn" style="background: var(--primary); padding: 12px 20px;"
+                        onclick="alert('جاري البحث في السجلات...')"><i class="fa-solid fa-magnifying-glass"></i>
+                        بحث</button>
+                    <button class="btn" style="background: var(--success); padding: 12px 20px;"
+                        onclick="startQRScanner()"><i class="fa-solid fa-camera"></i> تشغيل الكاميرا ومسح
+                        الباركود</button>
+                </div>
+
+                <!-- QR Scanner Area (Hidden initially) -->
+                <div id="qr-reader"
+                    style="display: none; margin-bottom: 20px; border-radius: 12px; overflow: hidden; border: 2px solid var(--success);">
+                </div>
+
+                <!-- Patients Table -->
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>كود المريض (ID)</th>
+                                <th>اسم المريض</th>
+                                <th>تاريخ آخر زيارة</th>
+                                <th>التشخيص المبدئي</th>
+                                <th>إجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span
+                                        style="background: rgba(10,124,255,0.1); color: var(--primary); padding: 4px 8px; border-radius: 6px; font-weight: bold; font-family: monospace;">MT-12345</span>
+                                </td>
+                                <td>سالم عبدالله</td>
+                                <td>منذ يومين</td>
+                                <td>التهاب حاد بالشعب الهوائية</td>
+                                <td>
+                                    <button class="btn" style="padding: 6px 15px; font-size: 13px;"
+                                        onclick="document.getElementById('patientDetailsModal').style.display='flex'">عرض
+                                        الملف <i class="fa-solid fa-folder-open"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span
+                                        style="background: rgba(10,124,255,0.1); color: var(--primary); padding: 4px 8px; border-radius: 6px; font-weight: bold; font-family: monospace;">MT-98765</span>
+                                </td>
+                                <td>يوسف محمود</td>
+                                <td>منذ أسبوع</td>
+                                <td>ارتفاع ضغط الدم (مستقر)</td>
+                                <td>
+                                    <button class="btn" style="padding: 6px 15px; font-size: 13px;"
+                                        onclick="document.getElementById('patientDetailsModal').style.display='flex'">عرض
+                                        الملف <i class="fa-solid fa-folder-open"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- PRESCRIPTIONS & MEDICATIONS SECTION -->
+            <section id="sec-prescriptions" class="content-section" style="display:none;">
+                <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-file-prescription"></i> كتابة روشتة تقرير للمريض
+                </h3>
+                <div class="form-box" style="margin: 0; max-width: 800px;">
+                    <div class="input-group">
+                        <label>اختر المريض المستهدف</label>
+                        <select style="font-weight: bold; background: var(--bg-color);">
+                            <option>سالم عبدالله - MT-12345</option>
+                            <option>يوسف محمود - MT-98765</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>التشخيص / الملاحظات السريرية</label>
+                        <textarea rows="2" placeholder="اكتب تشخيص الحالة باختصار هنا..."></textarea>
+                    </div>
+
+                    <h4
+                        style="margin: 20px 0 15px; color: var(--primary); display: flex; justify-content: space-between; align-items: center;">
+                        <span><i class="fa-solid fa-pills"></i> قائمة الأدوية الموصوفة</span>
+                        <button type="button" class="btn"
+                            style="background: var(--success); padding: 6px 15px; font-size: 13px;"
+                            onclick="addMedicineRow()">إضافة دواء جديد <i class="fa-solid fa-plus"></i></button>
+                    </h4>
+
+                    <div id="medicationsContainer"
+                        style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px;">
+                        <!-- Medicine Item 1 -->
+                        <div class="med-item"
+                            style="background: var(--bg-color); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); position: relative; transition: var(--transition);">
+                            <button type="button" onclick="this.parentElement.remove()"
+                                style="position: absolute; top: 15px; left: 15px; background: none; border: none; color: var(--danger); cursor: pointer; font-size: 18px;"
+                                title="حذف الدواء"><i class="fa-solid fa-trash-can"></i></button>
+                            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                                <div class="input-group" style="flex: 2; margin: 0;">
+                                    <label style="font-size: 12px; color: var(--text-muted);">اسم الدواء</label>
+                                    <input type="text" placeholder="مثال: أوجمنتين 1 جم">
+                                </div>
+                                <div class="input-group" style="flex: 1; margin: 0;">
+                                    <label style="font-size: 12px; color: var(--text-muted);">الجرعة</label>
+                                    <input type="text" placeholder="حبة واحدة">
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <div class="input-group" style="flex: 1; margin: 0;">
+                                    <label style="font-size: 12px; color: var(--text-muted);">التكرار</label>
+                                    <input type="text" placeholder="كل 12 ساعة">
+                                </div>
+                                <div class="input-group" style="flex: 2; margin: 0;">
+                                    <label style="font-size: 12px; color: var(--text-muted);">المدة / ملاحظات
+                                        الاستخدام</label>
+                                    <input type="text" placeholder="لمدة 7 أيام - بعد الأكل">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn" onclick="alert('تم حفظ الروشتة وإرسالها لملف المريض بنجاح!')"
+                        style="width: 100%; font-size: 16px; padding: 12px;">حفظ واعتماد الروشتة <i
+                            class="fa-solid fa-file-signature"></i></button>
+                </div>
+            </section>
+
+            <!-- CHAT SECTION -->
+            <section id="sec-chat" class="content-section" style="display:none;">
+                <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-comments"></i> رسائل المرضى</h3>
+                <div class="chat-container"
+                    style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; height: 500px; display: flex; overflow: hidden;">
+
+                    <!-- Contacts List -->
+                    <div class="contacts-list"
+                        style="width: 280px; border-left: 1px solid var(--border-color); display:flex; flex-direction:column; background: var(--bg-color);">
+                        <div style="padding: 15px; border-bottom: 1px solid var(--border-color);">
+                            <div style="font-weight: bold; margin-bottom: 10px;">قائمة المرضى</div>
+                            <div style="display: flex; gap: 5px;">
+                                <input type="text" id="chatSearchInput" placeholder="بحث باسم المريض أو كود QR..."
+                                    style="flex: 1; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color); font-size: 12px;">
+                                <button class="btn" style="padding: 8px; background: var(--success);"
+                                    onclick="startQRScanner('chatSearchInput')" title="مسح QR"><i
+                                        class="fa-solid fa-qrcode"></i></button>
+                            </div>
+                        </div>
+                        <div style="flex: 1; overflow-y: auto;">
+                            <div class="chat-contact active-contact"
+                                onclick="document.querySelector('.chat-container').classList.add('show-msg')"
+                                style="padding: 15px; background: rgba(10,124,255,0.1); border-bottom: 1px solid var(--border-color); cursor:pointer;">
+                                <b>سالم عبدالله <span
+                                        style="font-size:10px; color:var(--text-muted);">(MT-12345)</span></b><br>
+                                <small style="color:var(--text-muted);">أهلاً دكتور، نعم الحرارة...</small>
+                            </div>
+                            <div class="chat-contact"
+                                style="padding: 15px; border-bottom: 1px solid var(--border-color); cursor:pointer;">
+                                <b>نورة سعد <span
+                                        style="font-size:10px; color:var(--text-muted);">(MT-67890)</span></b><br>
+                                <small style="color:var(--text-muted);">شكراً جزيلاً دكتور.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Area -->
+                    <div class="chat-area" style="flex: 1; display: flex; flex-direction: column;">
+                        <div
+                            style="padding: 15px; background: var(--primary); color: white; display: flex; align-items: center; gap: 10px;">
+                            <button class="btn back-to-list"
+                                style="display:none; padding: 5px 10px; background: rgba(255,255,255,0.2); color: white;"
+                                onclick="document.querySelector('.chat-container').classList.remove('show-msg')"><i
+                                    class="fa-solid fa-arrow-right"></i> رجوع</button>
+                            <div>
+                                <h4 style="margin: 0;">سالم عبدالله</h4>
+                                <small style="opacity: 0.8;">MT-12345</small>
+                            </div>
+                        </div>
+                        <div id="doctorChatContainer"
+                            style="flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: var(--bg-color);">
+                            <!-- Messages will load here -->
+                        </div>
+                        <div
+                            style="padding: 15px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; background: var(--card-bg);">
+                            <input type="text" id="doctorChatInput" placeholder="اكتب ردك للمريض سالم..."
+                                style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <button class="btn" id="doctorChatBtn" style="padding: 12px 20px;"><i
+                                    class="fa-solid fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+
+            <!-- PATIENTS LIST SECTION -->
+            <section id="sec-patients" class="content-section" style="display:none;">
+                <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-users"></i> متابعة مرضى العيادة</h3>
+
+                <!-- Search Bar -->
+                <div
+                    style="display: flex; gap: 10px; margin-bottom: 20px; background: var(--card-bg); padding: 15px; border-radius: 12px; box-shadow: var(--shadow); align-items: center;">
+                    <input type="text" id="patientSearchInput1"
+                        placeholder="ابحث باسم المريض، كود الملف (ID)، أو امسح الباركود..."
+                        style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-main); font-family: inherit;">
+                    <button class="btn" style="background: var(--primary); padding: 12px 20px;"
+                        onclick="alert('جاري البحث في السجلات...')"><i class="fa-solid fa-magnifying-glass"></i>
+                        بحث</button>
+                    <button class="btn" style="background: var(--success); padding: 12px 20px;"
+                        onclick="startQRScanner('patientSearchInput1')"><i class="fa-solid fa-qrcode"></i> مسح
+                        QR</button>
+                </div>
+
+                <!-- Patients Table -->
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>كود المريض (ID)</th>
+                                <th>اسم المريض</th>
+                                <th>تاريخ آخر زيارة</th>
+                                <th>التشخيص المبدئي</th>
+                                <th>إجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span
+                                        style="background: rgba(10,124,255,0.1); color: var(--primary); padding: 4px 8px; border-radius: 6px; font-weight: bold; font-family: monospace;">MT-12345</span>
+                                </td>
+                                <td>سالم عبدالله</td>
+                                <td>منذ يومين</td>
+                                <td>التهاب حاد بالشعب الهوائية</td>
+                                <td>
+                                    <button class="btn" style="padding: 6px 15px; font-size: 13px;"
+                                        onclick="document.getElementById('patientDetailsModal').style.display='flex'">عرض
+                                        الملف <i class="fa-solid fa-folder-open"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span
+                                        style="background: rgba(10,124,255,0.1); color: var(--primary); padding: 4px 8px; border-radius: 6px; font-weight: bold; font-family: monospace;">MT-98765</span>
+                                </td>
+                                <td>يوسف محمود</td>
+                                <td>منذ أسبوع</td>
+                                <td>ارتفاع ضغط الدم (مستقر)</td>
+                                <td>
+                                    <button class="btn" style="padding: 6px 15px; font-size: 13px;"
+                                        onclick="document.getElementById('patientDetailsModal').style.display='flex'">عرض
+                                        الملف <i class="fa-solid fa-folder-open"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- LABS & X-RAYS SECTION -->
+            <section id="sec-labs" class="content-section" style="display:none;">
+                <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-vial-virus"></i> التحاليل والأشعة المرفقة من
+                    المرضى</h3>
+
+                <!-- Search & Filter -->
+                <div
+                    style="display: flex; gap: 10px; margin-bottom: 20px; background: var(--card-bg); padding: 15px; border-radius: 12px; box-shadow: var(--shadow); align-items: center;">
+                    <div class="input-group" style="margin: 0; flex: 1;">
+                        <input type="text" id="patientSearchInput2" placeholder="ابحث بكود المريض (مثال: MT-12345)..."
+                            style="width: 100%;">
+                    </div>
+                    <button class="btn" style="background: var(--primary); padding: 12px 20px;"
+                        onclick="alert('جاري البحث في ملفات المرضى...')"><i class="fa-solid fa-magnifying-glass"></i>
+                        بحث عن مرفقات</button>
+                    <button class="btn" style="background: var(--success); padding: 12px 20px;"
+                        onclick="startQRScanner('patientSearchInput2')"><i class="fa-solid fa-qrcode"></i> مسح
+                        QR</button>
+                </div>
+
+                <div class="grid-container">
+                    <!-- X-Ray Card -->
+                    <div class="stat-box" style="text-align: right; position: relative;">
+                        <span
+                            style="position: absolute; top: 15px; left: 15px; background: var(--danger); color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">جديد</span>
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                            <i class="fa-solid fa-x-ray" style="font-size: 40px; color: var(--primary);"></i>
+                            <div>
+                                <h3 style="margin: 0;">أشعة سينية (الصدر)</h3>
+                                <p style="color: var(--text-muted); font-size: 13px;">المريض: سالم عبدالله (MT-12345)
+                                </p>
+                            </div>
+                        </div>
+                        <p style="color: var(--text-main); font-size: 14px; margin-bottom: 15px;"><i
+                                class="fa-solid fa-calendar-day"></i> تاريخ الرفع: 11 مايو 2026</p>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn" style="flex: 1; padding: 8px;"
+                                onclick="alert('جاري عرض صورة الأشعة السينية...')"><i class="fa-solid fa-eye"></i> عرض
+                                الأشعة</button>
+                            <button class="btn btn-outline" style="flex: 1; padding: 8px;"
+                                onclick="alert('جاري تنزيل الملف...')"><i class="fa-solid fa-download"></i>
+                                تحميل</button>
+                        </div>
+                    </div>
+
+                    <!-- Lab Test Card -->
+                    <div class="stat-box" style="text-align: right;">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                            <i class="fa-solid fa-file-medical" style="font-size: 40px; color: var(--success);"></i>
+                            <div>
+                                <h3 style="margin: 0;">تحليل صورة دم (CBC)</h3>
+                                <p style="color: var(--text-muted); font-size: 13px;">المريض: يوسف محمود (MT-98765)</p>
+                            </div>
+                        </div>
+                        <p style="color: var(--text-main); font-size: 14px; margin-bottom: 15px;"><i
+                                class="fa-solid fa-calendar-day"></i> تاريخ الرفع: 12 مايو 2026</p>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn" style="flex: 1; padding: 8px;"
+                                onclick="alert('جاري فتح نتيجة التحليل...')"><i class="fa-solid fa-eye"></i> عرض
+                                التحليل</button>
+                            <button class="btn btn-outline" style="flex: 1; padding: 8px;"
+                                onclick="alert('جاري تنزيل الملف...')"><i class="fa-solid fa-download"></i>
+                                تحميل</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PROFILE SETTINGS SECTION -->
+            <section id="sec-profile" class="content-section" style="display:none;">
+                <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-user-gear"></i> إعدادات الحساب (الطبيب)</h3>
+
+                <div class="grid-container">
+                    <!-- Profile Picture & Info -->
+                    <div class="form-box" style="margin: 0; text-align: center;">
+                        <div style="position: relative; display: inline-block; margin-bottom: 20px;">
+                            <img src="https://ui-avatars.com/api/?name=Dr+Ahmed&background=3b82f6&color=fff"
+                                id="docProfileImage" alt="Profile"
+                                style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary); box-shadow: var(--shadow);">
+                            <label for="uploadProfileDoc"
+                                style="position: absolute; bottom: 0; right: 0; background: var(--success); color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 3px solid var(--card-bg); transition: var(--transition);">
+                                <i class="fa-solid fa-camera"></i>
+                            </label>
+                            <input type="file" id="uploadProfileDoc" style="display: none;" accept="image/*"
+                                onchange="alert('تم اختيار الصورة! سيتم تغييرها قريباً.')">
+                        </div>
+                        <h3 style="margin-bottom: 5px;">د. أحمد سمير</h3>
+                        <p style="color: var(--text-muted); font-size: 14px;">استشاري القلب والأوعية الدموية</p>
+                        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">dr.ahmed@medtrack.com
+                        </p>
+                    </div>
+
+                    <!-- Change Password & Info -->
+                    <div class="form-box" style="margin: 0;">
+                        <h4 style="margin-bottom: 20px; color: var(--text-main);"><i class="fa-solid fa-lock"></i> تحديث
+                            كلمة المرور وبيانات الاتصال</h4>
+                        <div class="input-group">
+                            <label>رقم الهاتف المخصص للعيادة</label>
+                            <input type="tel" value="01012345678">
+                        </div>
+                        <div class="input-group">
+                            <label>كلمة المرور الحالية</label>
+                            <input type="password" placeholder="أدخل كلمة المرور الحالية...">
+                        </div>
+                        <div class="input-group">
+                            <label>كلمة المرور الجديدة</label>
+                            <input type="password" placeholder="أدخل كلمة المرور الجديدة...">
+                        </div>
+                        <div class="input-group">
+                            <label>تأكيد كلمة المرور الجديدة</label>
+                            <input type="password" placeholder="أعد إدخال كلمة المرور الجديدة...">
+                        </div>
+                    </div>
+
+                    <!-- CV Settings inside Profile -->
+                    <div class="form-box" style="margin: 0; grid-column: 1 / -1;">
+                        <h4 style="margin-bottom: 20px; color: var(--text-main);"><i
+                                class="fa-solid fa-id-card-clip"></i> إعداد السيرة الذاتية وتفاصيل الطبيب</h4>
+                        <p style="margin-bottom: 20px; color: var(--text-muted); font-size: 13px;">هذه البيانات ستظهر
+                            للمرضى عند حجز موعد لتساعدهم في التعرف على خبراتك بشكل احترافي.</p>
+
+                        <div class="input-group">
+                            <label>النبذة التعريفية (Bio)</label>
+                            <textarea rows="2"
+                                placeholder="اكتب نبذة مختصرة عنك...">استشاري أول القلب والأوعية الدموية، متخصص في الحالات الحرجة.</textarea>
+                        </div>
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                            <div class="input-group" style="flex: 1; min-width: 250px;">
+                                <label>المؤهلات العلمية</label>
+                                <textarea rows="3" placeholder="مثال: دكتوراه في جراحة القلب والأوعية الدموية...">- دكتوراه أمراض القلب والأوعية الدموية (2015)
+- زمالة الكلية الملكية للأطباء (MRCP)</textarea>
+                            </div>
+                            <div class="input-group" style="flex: 1; min-width: 250px;">
+                                <label>الخبرات السابقة</label>
+                                <textarea rows="3" placeholder="مثال: رئيس قسم الجراحة במستشفى السلام...">- رئيس قسم الرعاية المركزة للقلب (2018 - 2023)
+- أستاذ مساعد بكلية الطب</textarea>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>التخصصات الدقيقة</label>
+                            <input type="text"
+                                value="قسطرة القلب العلاجية، الموجات الصوتية على القلب (الإيكو)، تركيب الدعامات">
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn" style="width: 100%; margin-top: 20px; padding: 15px; font-size: 16px;"
+                    onclick="alert('تم حفظ كافة التعديلات الخاصة بالطبيب والسيرة الذاتية بنجاح!')">حفظ جميع التعديلات <i
+                        class="fa-solid fa-floppy-disk"></i></button>
+            </section>
+        </main>
+    </div>
+
+    <!-- Patient Details Modal -->
+    <div id="patientDetailsModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+        <div class="form-box"
+            style="width: 90%; max-width: 700px; position: relative; margin: 0; padding: 30px; max-height: 90vh; overflow-y: auto;">
+            <button onclick="document.getElementById('patientDetailsModal').style.display='none'"
+                style="position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--danger);"><i
+                    class="fa-solid fa-xmark"></i></button>
+
+            <div
+                style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color);">
+                <img src="https://ui-avatars.com/api/?name=Salem&background=10b981&color=fff"
+                    style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid var(--success);">
+                <div>
+                    <h3 style="color: var(--text-main); margin-bottom: 5px;">سالم عبدالله <span
+                            style="font-size: 14px; background: var(--bg-color); padding: 2px 8px; border-radius: 8px; color: var(--text-muted); font-family: monospace;">#MT-12345</span>
+                    </h3>
+                    <p style="color: var(--text-muted); font-size: 14px;">العمر: 35 سنة | النوع: ذكر | أمراض مزمنة:
+                        الربو التحسسي</p>
+                </div>
+            </div>
+
+            <h4 style="margin-bottom: 15px; color: var(--primary);"><i class="fa-solid fa-notes-medical"></i> الملاحظات
+                الطبية الأخيرة</h4>
+            <div
+                style="background: var(--bg-color); padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--border-color);">
+                يعاني المريض من سعال شديد مع بلغم. تم وصف مضاد حيوي (أوجمنتين 1 جم) ومسكن.
+                <br><strong>الحيوية:</strong> الحرارة: 38.5 | الضغط: 120/80
+            </div>
+
+            <h4 style="margin-bottom: 15px; color: var(--success);"><i class="fa-solid fa-file-prescription"></i>
+                الروشتات السابقة (التاريخ الطبي)</h4>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+                <div
+                    style="background: var(--bg-color); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong style="color: var(--text-main); display: block;"><i
+                                class="fa-solid fa-calendar-days"></i> روشتة بتاريخ: 10 مايو 2026</strong>
+                        <small style="color: var(--text-muted);">التشخيص: التهاب حاد بالشعب الهوائية</small>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn" style="padding: 5px 10px; font-size: 12px; background: var(--primary);"
+                            onclick="alert('الأدوية: \n- أوجمنتين 1 جم (حبة كل 12 ساعة) \n- بانادول إكسترا (حبتين عند اللزوم)')">عرض
+                            <i class="fa-solid fa-eye"></i></button>
+                        <button class="btn" style="padding: 5px 10px; font-size: 12px; background: var(--danger);"
+                            onclick="if(confirm('هل أنت متأكد من حذف هذه الروشتة نهائياً من ملف المريض؟')) this.parentElement.parentElement.remove()">مسح
+                            <i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
+
+                <div
+                    style="background: var(--bg-color); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong style="color: var(--text-main); display: block;"><i
+                                class="fa-solid fa-calendar-days"></i> روشتة بتاريخ: 15 أبريل 2026</strong>
+                        <small style="color: var(--text-muted);">التشخيص: حساسية موسمية</small>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn" style="padding: 5px 10px; font-size: 12px; background: var(--primary);"
+                            onclick="alert('الأدوية: \n- زيرتيك 10 مجم (حبة مساءً)')">عرض <i
+                                class="fa-solid fa-eye"></i></button>
+                        <button class="btn" style="padding: 5px 10px; font-size: 12px; background: var(--danger);"
+                            onclick="if(confirm('هل أنت متأكد من حذف هذه الروشتة نهائياً من ملف المريض؟')) this.parentElement.parentElement.remove()">مسح
+                            <i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <h4 style="margin-bottom: 15px; color: var(--warning);"><i class="fa-solid fa-vial-virus"></i> الأشعة والتحاليل المرفقة</h4>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+                <div style="background: var(--bg-color); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i class="fa-solid fa-x-ray" style="font-size: 24px; color: var(--primary);"></i>
+                        <div>
+                            <strong style="color: var(--text-main); display: block;">أشعة سينية (الصدر)</strong>
+                            <small style="color: var(--text-muted);">مرفوعة بتاريخ: 11 مايو 2026</small>
+                        </div>
+                    </div>
+                    <button class="btn" style="padding: 5px 10px; font-size: 12px; background: var(--primary);" onclick="alert('جاري فتح وعرض صورة الأشعة...')">عرض <i class="fa-solid fa-eye"></i></button>
+                </div>
+
+                <div style="background: var(--bg-color); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i class="fa-solid fa-file-medical" style="font-size: 24px; color: var(--success);"></i>
+                        <div>
+                            <strong style="color: var(--text-main); display: block;">تحليل صورة دم (CBC)</strong>
+                            <small style="color: var(--text-muted);">مرفوعة بتاريخ: 12 مايو 2026</small>
+                        </div>
+                    </div>
+                    <button class="btn" style="padding: 5px 10px; font-size: 12px; background: var(--primary);" onclick="alert('جاري عرض نتيجة التحليل...')">عرض <i class="fa-solid fa-eye"></i></button>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn" style="flex: 1; background: var(--primary);"
+                    onclick="document.getElementById('patientDetailsModal').style.display='none'; showSec('sec-prescriptions', document.querySelectorAll('.sidebar ul li a')[2])"><i
+                        class="fa-solid fa-file-prescription"></i> كتابة روشتة جديدة</button>
+                <button class="btn" style="flex: 1; background: var(--warning);"
+                    onclick="document.getElementById('patientDetailsModal').style.display='none'; showSec('sec-chat', document.querySelectorAll('.sidebar ul li a')[3])"><i
+                        class="fa-solid fa-comments"></i> مراسلة المريض</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Scanner Modal -->
+    <div id="qrScannerModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+        <div class="form-box"
+            style="width: 90%; max-width: 400px; position: relative; margin: 0; padding: 20px; text-align: center;">
+            <button onclick="closeQRScanner()"
+                style="position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--danger); z-index: 10;"><i
+                    class="fa-solid fa-xmark"></i></button>
+            <h3 style="margin-bottom: 15px;"><i class="fa-solid fa-qrcode"></i> مسح كود المريض (QR)</h3>
+            <div id="qr-reader" style="width: 100%; border-radius: 12px; overflow: hidden;"></div>
+        </div>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        function showSec(id, el) {
+            document.querySelectorAll('.sidebar ul li a').forEach(a => a.classList.remove('active'));
+            el.classList.add('active');
+            document.querySelectorAll('.content-section').forEach(sec => sec.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
+        }
+
+        function addMedicineRow() {
+            const container = document.getElementById('medicationsContainer');
+            const div = document.createElement('div');
+            div.className = 'med-item';
+            div.style.cssText = 'background: var(--bg-color); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); position: relative; margin-top: -10px; animation: fadeIn 0.3s ease forwards; opacity: 0; transform: translateY(-10px);';
+            div.innerHTML = `
+                <button type="button" onclick="this.parentElement.remove()" style="position: absolute; top: 15px; left: 15px; background: none; border: none; color: var(--danger); cursor: pointer; font-size: 18px;" title="حذف الدواء"><i class="fa-solid fa-trash-can"></i></button>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <div class="input-group" style="flex: 2; margin: 0;">
+                        <label style="font-size: 12px; color: var(--text-muted);">اسم الدواء</label>
+                        <input type="text" placeholder="أدخل اسم الدواء...">
+                    </div>
+                    <div class="input-group" style="flex: 1; margin: 0;">
+                        <label style="font-size: 12px; color: var(--text-muted);">الجرعة</label>
+                        <input type="text" placeholder="مثال: حبة">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <div class="input-group" style="flex: 1; margin: 0;">
+                        <label style="font-size: 12px; color: var(--text-muted);">التكرار</label>
+                        <input type="text" placeholder="مثال: مرتين يومياً">
+                    </div>
+                    <div class="input-group" style="flex: 2; margin: 0;">
+                        <label style="font-size: 12px; color: var(--text-muted);">ملاحظات</label>
+                        <input type="text" placeholder="مثال: بعد الأكل">
+                    </div>
+                </div>
+            `;
+            // Simple animation
+            setTimeout(() => {
+                div.style.opacity = '1';
+                div.style.transform = 'translateY(0)';
+            }, 10);
+            container.appendChild(div);
+        }
+
+        let currentTargetInput = '';
+        let html5QrcodeScanner;
+        function startQRScanner(inputId) {
+            currentTargetInput = inputId;
+            document.getElementById('qrScannerModal').style.display = 'flex';
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.clear();
+            }
+            const qrboxSize = window.innerWidth < 500 ? 200 : 250;
+            html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: { width: qrboxSize, height: qrboxSize } }, false);
+            html5QrcodeScanner.render((decodedText) => {
+                document.getElementById(currentTargetInput).value = decodedText;
+                closeQRScanner();
+                alert('تم مسح كود المريض بنجاح: ' + decodedText);
+            }, () => { });
+        }
+        function closeQRScanner() {
+            document.getElementById('qrScannerModal').style.display = 'none';
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.clear();
+                html5QrcodeScanner = null;
+            }
+        }
+
+        // Load QR from Admin
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedUrl = localStorage.getItem('medtrack_doctor_qr_url');
+            if(savedUrl) {
+                const qrImg = document.getElementById('headerQrImg');
+                const qrPlaceholder = document.getElementById('headerQrPlaceholder');
+                const qrContainer = document.getElementById('headerQrContainer');
+                
+                if(qrImg && qrPlaceholder) {
+                    qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent(savedUrl);
+                    qrImg.style.display = 'block';
+                    qrPlaceholder.style.display = 'none';
+                    qrContainer.style.border = '1px solid var(--border-color)';
+                }
+            }
+        });
+    </script>
+    <style>
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    <!-- Diagnose Modal -->
+    <div id="diagnoseModal" class="modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 500px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0; color: var(--primary);">تشخيص المريض: <span id="diagPatientName"></span></h3>
+                <i class="fa-solid fa-xmark" style="cursor: pointer; font-size: 20px; color: var(--text-muted);" onclick="document.getElementById('diagnoseModal').style.display='none'"></i>
+            </div>
+            <textarea id="diagText" rows="4" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 20px;" placeholder="اكتب التشخيص الطبي هنا..."></textarea>
+            <button class="btn" style="width: 100%;" onclick="saveDiagnosis()">حفظ وإرسال للمريض</button>
+        </div>
+    </div>
+
+    <script>
+        // Store the name of the patient being diagnosed
+        let currentPatientToDiagnose = '';
+
+        function openDiagnoseModal(patientName) {
+            currentPatientToDiagnose = patientName;
+            document.getElementById('diagPatientName').innerText = patientName;
+            document.getElementById('diagText').value = '';
+            document.getElementById('diagnoseModal').style.display = 'flex';
+        }
+
+        function saveDiagnosis() {
+            const diagnosis = document.getElementById('diagText').value;
+            if(!diagnosis.trim()) { alert('يرجى كتابة التشخيص'); return; }
+            
+            // In a real app, you would send this to a backend.
+            // Here, we save to localStorage to simulate passing data to patients.html
+            const diagnosisData = {
+                text: diagnosis,
+                doctor: 'د. أحمد سمير',
+                date: new Date().toLocaleDateString('ar-EG')
+            };
+            localStorage.setItem('patientDiagnosis', JSON.stringify(diagnosisData));
+            
+            document.getElementById('diagnoseModal').style.display = 'none';
+            alert('تم حفظ التشخيص بنجاح، وسيظهر الآن في ملف المريض.');
+        }
+
+        function confirmAppointment(patientName, dateTime) {
+            if(!dateTime) { alert('يرجى تحديد تاريخ ووقت الموعد'); return; }
+            
+            // Format datetime locally
+            const dateObj = new Date(dateTime);
+            const formattedDate = dateObj.toLocaleDateString('ar-EG', { month: 'long', day: 'numeric' }) + ' - ' + dateObj.toLocaleTimeString('ar-EG', { hour: '2-digit', minute:'2-digit' });
+
+            const apptData = {
+                patient: patientName,
+                doctor: 'د. أحمد سمير',
+                datetime: formattedDate,
+                status: 'مؤكد'
+            };
+            localStorage.setItem('patientAppointment', JSON.stringify(apptData));
+            
+            alert('تم الموافقة على الموعد: ' + formattedDate + '\nوإرسال إشعار للمريض.');
+        }
+    </script>
+    <!-- Emergency Call Button -->
+    <a href="tel:997" class="emergency-btn" title="اتصال بالطوارئ والاسعاف">
+        <i class="fa-solid fa-truck-medical"></i>
+        <span class="emergency-text">طوارئ / إسعاف</span>
+    </a>
+</body>
+
+</html>
